@@ -92,10 +92,49 @@ int *polling(char *buffer, int *count){
 // insert your code to gather keyboard input via the technique of polling.
 // You must validat each key and handle special keys such as delete, back space, and
 // arrow keys
+	klogv("Entered Polling: Successful");
+	while(1){
+	
+//if key is pressed store character into the buffer
+		//
+		//if(inb(COM1+5)==00001101){
+		//return(*buffer);
+		//}
+		if(inb(COM1+5)&&1){
+			buffer[*count]=inb(COM1+5);
+			serial_print(&buffer[*count]);
+			count++;
+		}
+		
+		}
+		
+//void return(*buffer){
+
+//}
+//void backspace(*buffer){}
+//void delete(*buffer){}
+
+//void leftarrow(*buffer){
+//ascii 75 
+//move the arrow over to one spot behind, and move whatever is currently in the buffer one space ahead leaving the spot open for a new character to be placed in location 
+
+//}
+
+//void uparrow(*buffer){
+//ascii 72
+//}
+//void downarrow(*buffer){
+//ascii 80
+//}
+
+
+//void rightarrow(*buffer){
+//ascii 77
+//}
 
 // remove the following line after implementing your module, this is present
 // just to allow the program to compile before R1 is complete
-strlen(buffer);
+//strlen(buffer);
 
 return count;
 }

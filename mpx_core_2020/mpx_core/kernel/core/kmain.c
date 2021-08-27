@@ -22,7 +22,7 @@
 #include <mem/paging.h>
 
 #include "modules/mpx_supt.h"
-#include "modules/R1/polling.c"
+#include "modules/R1/Comhandle.c"
 
 
 void kmain(void)
@@ -82,7 +82,7 @@ void kmain(void)
 
    // 6) Call YOUR command handler -  interface method
    klogv("Transferring control to commhand...");
-	polling();
+   comHand();
 
    // 7) System Shutdown on return from your command handler
    klogv("Starting system shutdown procedure...");
