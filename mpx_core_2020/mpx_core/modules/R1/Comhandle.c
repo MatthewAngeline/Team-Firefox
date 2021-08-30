@@ -1,11 +1,10 @@
 #include "../../kernel/core/serial.c"
-int *count = 100;
-char buffer[count];
+int *count;
+char buffer[100];
 //main file to run all the applications and used to create the menu driven logic.
 void comHand(){
 klogv("Entered Comhandler Successful");
-
-*polling(*buffer,*count);
+polling(buffer,count);
 
 }
 //allows the user to set the date with a given date. Needs to not allow for dates greater then the given number of dates within a month. 
