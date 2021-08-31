@@ -1,9 +1,10 @@
-#include "../../kernel/core/serial.c"
+#include <../include/core/serial.h>
+#include "Comhandle.h"
 int *count;
 char buffer[100];
 //main file to run all the applications and used to create the menu driven logic.
 void comHand(){
-klogv("Entered Comhandler Successful");
+//klogv("Entered Comhandler Successful");
 polling(buffer,count);
 
 }

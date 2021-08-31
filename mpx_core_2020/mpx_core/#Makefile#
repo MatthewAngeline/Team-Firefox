@@ -44,7 +44,7 @@ modules/modules.o:
 
 .PHONY : kernel.bin
 kernel.bin: $(OBJFILES) $(LIBS) $(MODULES)
-	$(LD) $(LDFLAGS) -o $@ $(OBJFILES) $(LIBS) $(MODULES)
+$(LD) $(LDFLAGS) -o $@ $(OBJFILES) $(LIBS) $(MODULES)
 
 .PHONY : kernel.img
 kernel.img: kernel.bin

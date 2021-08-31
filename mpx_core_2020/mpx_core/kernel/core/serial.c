@@ -92,7 +92,7 @@ int *polling(char *buffer, int *count){
 // insert your code to gather keyboard input via the technique of polling.
 // You must validat each key and handle special keys such as delete, back space, and
 // arrow keys
-	klogv("Entered Polling: Successful");
+	//klogv("Entered Polling: Successful");
 	while(1){
 	
 //if key is pressed store character into the buffer
