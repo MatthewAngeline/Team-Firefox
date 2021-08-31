@@ -10,6 +10,7 @@
 
 #include <core/io.h>
 #include <core/serial.h>
+#include "../../modules/mpx_supt.h"
 
 #define NO_ERROR 0
 
@@ -92,22 +93,27 @@ int *polling(char *buffer, int *count){
 // insert your code to gather keyboard input via the technique of polling.
 // You must validat each key and handle special keys such as delete, back space, and
 // arrow keys
-	//klogv("Entered Polling: Successful");
+	
+	klogv("Entered Polling: Successful");
+	
 	while(1){
 	
 //if key is pressed store character into the buffer
-		//
-		//if(inb(COM1+5)==00001101){
-		//return(*buffer);
-		//}
+		
 		if(inb(COM1+5)&&1){
+		klogv("Entered If Statement");
 			buffer[*count]=inb(COM1+5);
+			klogv("Added to buffer Loop");
+			
 			serial_print(&buffer[*count]);
-			count++;
+			klogv("Echo'd to screen");
+			*count=*count+1;
+			klogv("Added An item Successful");
 		}
-		
+		sys_req(WRITE,DEFAULT_DEVICE,"Hello World",count);
+		//klogv("exited if ");
 		}
-		
+		klogv("Leaving While Loop");
 //void return(*buffer){
 
 //}

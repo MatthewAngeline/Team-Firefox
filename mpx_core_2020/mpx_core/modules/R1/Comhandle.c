@@ -4,7 +4,7 @@ int *count;
 char buffer[100];
 //main file to run all the applications and used to create the menu driven logic.
 void comHand(){
-//klogv("Entered Comhandler Successful");
+*count=0;
 polling(buffer,count);
 
 }
