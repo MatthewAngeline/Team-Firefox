@@ -99,49 +99,33 @@ int *polling(char *buffer, int *count){
 //if key is pressed store character into the buffer
 		
 		if(inb(COM1+5)&1){
-		//enter key ascii code is 0x0D 
-		if(inb(COM1) == 0x0D){
+		
+		//logic for each key stroke... breaks the lower if statement though....
+		char letter = inb(COM1);
+		buffer = &letter;
+		serial_print(buffer);		
+		*count=*count;
+		}
+		if(inb(COM1)==0x0D){
 		break;
 		}
-		else{
-			buffer[*count]=inb(COM1+5);
-			serial_print(&buffer[*count]);
-			*count=*count+1;
-			}
-			
+		//ascii for backspace. 
+		//else if(inb(COM1)==0x08){
+		//}
+		//delete ascii is 0x7f
+		//else if(inb(COM1)==0x7f){
+		//}
 		
 		
-		}
+		//enter key ascii code is 0x0D 
+		//backspace key ascii code is 0x08
+		
+
+		
 		}
 		klogv("Leaving While Loop");
-//void return(*buffer){
-
-//}
-//void backspace(*buffer){}
-//void delete(*buffer){}
-
-//void leftarrow(*buffer){
-//ascii 75 
-//move the arrow over to one spot behind, and move whatever is currently in the buffer one space ahead leaving the spot open for a new character to be placed in location 
-
-//}
-
-//void uparrow(*buffer){
-//ascii 72
-//}
-//void downarrow(*buffer){
-//ascii 80
-//}
 
 
-//void rightarrow(*buffer){
-//ascii 77
-//}
-
-// remove the following line after implementing your module, this is present
-// just to allow the program to compile before R1 is complete
-//strlen(buffer);
-
-return count;
+return 0;
 }
 
