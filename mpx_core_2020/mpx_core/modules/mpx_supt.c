@@ -63,10 +63,17 @@ int sys_req( 	int  op_code,
 
   else if (op_code == READ || op_code == WRITE) {
     // validate buffer pointer and count pointer
-    if (buffer_ptr == NULL)
+    if (buffer_ptr == NULL){
       return_code = INVALID_BUFFER;
-    else if (count_ptr == NULL || *count_ptr <= 0)
+      serial_println("Null Buffer");
+      }
+    else if (count_ptr == NULL || *count_ptr <= 0){
       return_code = INVALID_COUNT;
+      serial_println("Count is NULL");
+}
+else if(*count_ptr<=0){
+serial_println("count is less than or equal to zero");
+}
 
     // if parameters are valid store in the params structure
     if ( return_code == 0){ 

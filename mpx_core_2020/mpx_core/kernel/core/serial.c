@@ -93,32 +93,37 @@ int *polling(char *buffer, int *count){
 // insert your code to gather keyboard input via the technique of polling.
 // You must validat each key and handle special keys such as delete, back space, and
 // arrow keys
-	
+	//klogv("got to polling from sys_req(read..");
 	while(1){
+	
 	
 //if key is pressed store character into the buffer
 		
 		if(inb(COM1+5)&1){
-		
-		//logic for each key stroke... breaks the lower if statement though....
+		int bufferCount=0;
+		//logic for each key stroke
 		char letter = inb(COM1);
-		buffer = &letter;
+		buffer[bufferCount] = letter;
 		serial_print(buffer);		
-		*count=*count;
+		*count=*count+1;
 		}
+		//ascii for enter (have to press and hold because just pressing gets the carriage returns instead)
 		if(inb(COM1)==0x0D){
 		break;
 		}
 		//ascii for backspace. 
-		//else if(inb(COM1)==0x08){
+		//if(inb(COM1)==127){	
+		//buffer[*count-1]=NULL;
+		//serial_print("backspace");
+		//*count=*count-1;
 		//}
 		//delete ascii is 0x7f
-		//else if(inb(COM1)==0x7f){
+		//if(inb(COM1)==0x7f){
+		
 		//}
 		
 		
-		//enter key ascii code is 0x0D 
-		//backspace key ascii code is 0x08
+		
 		
 
 		
@@ -126,6 +131,6 @@ int *polling(char *buffer, int *count){
 		klogv("Leaving While Loop");
 
 
-return 0;
+return count;
 }
 

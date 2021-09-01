@@ -1,12 +1,38 @@
 #include <../include/core/serial.h>
 #include "Comhandle.h"
-int *count;
-char buffer[100];
+#include "../mpx_supt.h"
+int *countPtr;
+int menuCountPtr;
+int quit=0;
+char userInput[100];
+char MENU[]={"\n\n\n1: Set Date \n2: Set Time \n3: Display Date \n4: Display Time\n5: Version\n6: Shut Down \n"};
+char CONFIRMATION[]={"Enter y + enter to shutdown press n + enter to go back to menu"}; 
 //main file to run all the applications and used to create the menu driven logic.
-void comHand(){
-*count=0;
-polling(buffer,count);
+int comHand(){
 
+menuCountPtr=70;
+sys_req(WRITE,DEFAULT_DEVICE,MENU,&menuCountPtr);
+
+while(!quit){
+polling(userInput,countPtr);
+//void *memset(userInput, '\0', 100*sizeof(char));
+//countPtr=99;
+//sys_req(READ,DEFAULT_DEVICE,userInput,&countPtr);
+//serial_println("test 2");
+if(userInput[*countPtr]=='a'){
+sys_req(WRITE,DEFAULT_DEVICE,CONFIRMATION,&menuCountPtr);
+if(userInput[*countPtr]=='y')
+quit=1;
+else if(userInput[*countPtr]=='n'){
+comHand();
+}
+
+
+
+}
+}
+
+return 0;
 }
 //allows the user to set the date with a given date. Needs to not allow for dates greater then the given number of dates within a month. 
 void Setdate(){

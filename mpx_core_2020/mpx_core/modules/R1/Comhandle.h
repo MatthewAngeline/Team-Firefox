@@ -2,7 +2,7 @@
 
 
 
-void comHand();
+int comHand();
 
 void Setdate();
 
