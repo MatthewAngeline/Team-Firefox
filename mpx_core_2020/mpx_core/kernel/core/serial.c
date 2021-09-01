@@ -94,24 +94,24 @@ int *polling(char *buffer, int *count){
 // You must validat each key and handle special keys such as delete, back space, and
 // arrow keys
 	
-	klogv("Entered Polling: Successful");
-	
 	while(1){
 	
 //if key is pressed store character into the buffer
 		
-		if(inb(COM1+5)&&1){
-		klogv("Entered If Statement");
-			buffer[*count]=inb(COM1+5);
-			klogv("Added to buffer Loop");
-			
-			serial_print(&buffer[*count]);
-			klogv("Echo'd to screen");
-			*count=*count+1;
-			klogv("Added An item Successful");
+		if(inb(COM1+5)&1){
+		//enter key ascii code is 0x0D 
+		if(inb(COM1) == 0x0D){
+		break;
 		}
-		sys_req(WRITE,DEFAULT_DEVICE,"Hello World",count);
-		//klogv("exited if ");
+		else{
+			buffer[*count]=inb(COM1+5);
+			serial_print(&buffer[*count]);
+			*count=*count+1;
+			}
+			
+		
+		
+		}
 		}
 		klogv("Leaving While Loop");
 //void return(*buffer){
