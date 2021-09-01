@@ -1,12 +1,17 @@
 #include <../include/core/serial.h>
 #include "Comhandle.h"
 #include "../mpx_supt.h"
-int *countPtr;
+#include "../../include/string.h"
+int countPtr;
 int menuCountPtr;
 int quit=0;
+
 char userInput[100];
-char MENU[]={"\n\n\n1: Set Date \n2: Set Time \n3: Display Date \n4: Display Time\n5: Version\n6: Shut Down \n"};
+char MENU[]={"\n\n\n0: help \n1: Set Date \n2: Set Time \n3: Display Date \n4: Display Time\n5: Version\n6: Shut Down \n"};
 char CONFIRMATION[]={"Enter y + enter to shutdown press n + enter to go back to menu"}; 
+char VERSION[]={"1.1"};
+char HELP[]={};
+
 //main file to run all the applications and used to create the menu driven logic.
 int comHand(){
 
@@ -14,16 +19,36 @@ menuCountPtr=70;
 sys_req(WRITE,DEFAULT_DEVICE,MENU,&menuCountPtr);
 
 while(!quit){
-polling(userInput,countPtr);
-//void *memset(userInput, '\0', 100*sizeof(char));
-//countPtr=99;
-//sys_req(READ,DEFAULT_DEVICE,userInput,&countPtr);
-//serial_println("test 2");
-if(userInput[*countPtr]=='a'){
+memset(userInput, '\0', 100);
+countPtr=99;
+sys_req(READ,DEFAULT_DEVICE,userInput,&countPtr);
+
+if(userInput[countPtr]=='0'){
+
+}
+//if 1 is pressed set date
+if(userInput[countPtr]=='1'){
+}
+//if 2 is pressed set time
+if(userInput[countPtr]=='2'){
+}
+//if 3 is pressed get Date
+if(userInput[countPtr]=='3'){
+}
+//if 4 is pressed get time
+if(userInput[countPtr]=='4'){
+}
+//if 5 is pressed get version
+if(userInput[countPtr]=='5'){
+Version();
+}
+//if 6 is pressed shutdown
+if(userInput[countPtr]=='6'){
+klogv("Got to shutdown protocol");
 sys_req(WRITE,DEFAULT_DEVICE,CONFIRMATION,&menuCountPtr);
-if(userInput[*countPtr]=='y')
+if(userInput[countPtr]=='y')
 quit=1;
-else if(userInput[*countPtr]=='n'){
+else if(userInput[countPtr]=='n'){
 comHand();
 }
 
@@ -34,6 +59,8 @@ comHand();
 
 return 0;
 }
+
+
 //allows the user to set the date with a given date. Needs to not allow for dates greater then the given number of dates within a month. 
 void Setdate(){
 
@@ -55,7 +82,9 @@ void getTime(){
 
 //displays a hard code information about the current module for this on It should read "We are currently on version R.1 or 1.1. 
 void Version(){
-
+menuCountPtr=70;
+sys_req(WRITE,DEFAULT_DEVICE,VERSION,&menuCountPtr);
+comHand();
 }
 //displays hard coded information about each of the modules that have been added that the user can use. 
 void Help(){
