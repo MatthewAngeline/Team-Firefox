@@ -105,12 +105,14 @@ int *polling(char *buffer, int *count){
 // You must validat each key and handle special keys such as delete, back space, and
 // arrow keys
 	//klogv("got to polling from sys_req(read..");
+	buffer[bufferCount]='\0';
 	while(1){
 	
-	//int sentinal = 0;
+	
 //if key is pressed store character into the buffer
 		
 		if(inb(COM1+5)&1){
+<<<<<<< HEAD
 		//logic for each key stroke
 		char letter = inb(COM1);
 		buffer[bufferCount] = letter;
@@ -130,30 +132,49 @@ int *polling(char *buffer, int *count){
 		//buffer[bufferCount]=127;
 		count=count-1;
 		//bufferCount=bufferCount+1;
+=======
+		//store the key in buffer
+		char letter= inb(COM1);
+		buffer[bufferCount]=letter;
+				
+		//logic for each key stroke		
+		if(bufferCount==5){
+		break;
+		}
+		//ascii for enter 0x0D will halt the key when pressed and wont update the buffer array
+		if(letter==0x0D){
+		break;
+		}
+		//ascii for backspace is 127, will remove one item from buffer count and then deletes the item on screen
+		else if(letter==127){	
+		bufferCount=bufferCount-1;
+>>>>>>> 74929e8e534b71b02cd9c8c90e242557d3d13f4c
 		serial_print("\b \b");
 		}
-		
-		
-		if(inb(COM1)==13){
+		//ascii for down array is 13 and will drop down to a new line. not sure how it affects the buffer because in theory it should create a new line so should we reset buffer back to 0? 
+		else if(letter==13){
 		serial_print("\r \r");
 		}
-		if(inb(COM1)==10){
+		else if(letter==10){
 		serial_print("\n \n");
-		
 		}
+		
+		//NEED TO ASK TA SAM about the codes for left and right arrow because idk how to get those to work 
 		//if(inb(COM1)==RIGHT_ARROW){
 		//bufferCount++;
 		
-		//}
+	      //  }
 		//if(inb(COM1)==LEFT_ARROW){
 		//bufferCount--;
 		
 		//}
 		//delete ascii is 0x7f
-		//if(inb(COM1)==0x7f){
+		//if(letter==0x7f){
 		
 		//}
+		else{
 		
+<<<<<<< HEAD
 		//buffer fills and breaks out - should be 100 using for tests
 		if(bufferCount==5){
 		serial_print("\n");
@@ -161,6 +182,11 @@ int *polling(char *buffer, int *count){
 		}
 		//ascii for enter 0x0D
 		
+=======
+		serial_print(&buffer[bufferCount]);
+		bufferCount=bufferCount+1;
+		}
+>>>>>>> 74929e8e534b71b02cd9c8c90e242557d3d13f4c
 		}
 
 		
