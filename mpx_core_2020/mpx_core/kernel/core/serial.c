@@ -14,9 +14,20 @@
 
 #define NO_ERROR 0
 
+
+#define BACKSPACE 127;
+#define ENTER 0X0D;
+#define LEFT_ARROW 0;75;
+#define RIGHT_ARROW 0;77;
+#define UP_ARROW 10;
+#define DOWN_ARROW 13;
+
+
+int bufferCount=0;
 // Active devices used for serial I/O
 int serial_port_out = 0;
 int serial_port_in = 0;
+
 
 /*
   Procedure..: init_serial
@@ -98,24 +109,44 @@ int *polling(char *buffer, int *count){
 	
 	
 //if key is pressed store character into the buffer
-		if(inb(COM1)==0x0D){
-		break;
-		}
+		
 		if(inb(COM1+5)&1){
-		int bufferCount=0;
 		//logic for each key stroke
 		char letter = inb(COM1);
 		buffer[bufferCount] = letter;
-		serial_print(buffer);		
+		serial_print(&buffer[bufferCount]);
+		bufferCount=bufferCount+1;		
 		*count=*count+1;
+		if(bufferCount==5){
+		break;
 		}
 		//ascii for enter (have to press and hold because just pressing gets the carriage returns instead)
+		if(inb(COM1)==0x0D){
+		break;
+		}
+		if(inb(COM1)==127){	
+		bufferCount=bufferCount-1;
+		buffer[bufferCount]=127;
+		count=count-1;
+		bufferCount=bufferCount+1;
+		serial_print("\b \b");
+		}
+		//ascii for backspace 127. 
 		
-		//ascii for backspace. 
-		//if(inb(COM1)==127){	
-		//buffer[*count-1]=NULL;
-		//serial_print("backspace");
-		//*count=*count-1;
+		if(inb(COM1)==13){
+		serial_print("\r \r");
+		}
+		if(inb(COM1)==10){
+		serial_print("\n \n");
+		
+		}
+		//if(inb(COM1)==RIGHT_ARROW){
+		//bufferCount++;
+		
+		//}
+		//if(inb(COM1)==LEFT_ARROW){
+		//bufferCount--;
+		
 		//}
 		//delete ascii is 0x7f
 		//if(inb(COM1)==0x7f){
@@ -124,7 +155,7 @@ int *polling(char *buffer, int *count){
 		
 		
 		
-		
+		}
 
 		
 		}

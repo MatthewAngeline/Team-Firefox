@@ -5,6 +5,7 @@
 int countPtr;
 int menuCountPtr;
 int quit=0;
+int bufferTrack=0;
 
 char userInput[100];
 char MENU[]={"\n\n\n0: help \n1: Set Date \n2: Set Time \n3: Display Date \n4: Display Time\n5: Version\n6: Shut Down \n"};
@@ -12,43 +13,46 @@ char CONFIRMATION[]={"Enter y + enter to shutdown press n + enter to go back to 
 char VERSION[]={"1.1"};
 char HELP[]={};
 
+
+int i=0;
 //main file to run all the applications and used to create the menu driven logic.
 int comHand(){
 
 menuCountPtr=70;
 sys_req(WRITE,DEFAULT_DEVICE,MENU,&menuCountPtr);
 
-while(!quit){
 memset(userInput, '\0', 100);
-countPtr=99;
+countPtr=100;
 sys_req(READ,DEFAULT_DEVICE,userInput,&countPtr);
-
-if(userInput[countPtr]=='0'){
+bufferTrack=countPtr;
+while(!quit){
+if(userInput[i] == 0){
 
 }
 //if 1 is pressed set date
-if(userInput[countPtr]=='1'){
+if(userInput[i]==1){
 }
 //if 2 is pressed set time
-if(userInput[countPtr]=='2'){
+if(userInput[i]==2){
 }
 //if 3 is pressed get Date
-if(userInput[countPtr]=='3'){
+if(userInput[i]==3){
 }
 //if 4 is pressed get time
-if(userInput[countPtr]=='4'){
+if(userInput[i]==4){
 }
 //if 5 is pressed get version
-if(userInput[countPtr]=='5'){
+if(userInput[i]==5){
+klogv("Entering the Version");
 Version();
 }
 //if 6 is pressed shutdown
-if(userInput[countPtr]=='6'){
+if(userInput[i]==6){
 klogv("Got to shutdown protocol");
 sys_req(WRITE,DEFAULT_DEVICE,CONFIRMATION,&menuCountPtr);
-if(userInput[countPtr]=='y')
+if(userInput[bufferTrack]=='y')
 quit=1;
-else if(userInput[countPtr]=='n'){
+else if(userInput[bufferTrack]=='n'){
 comHand();
 }
 
@@ -82,7 +86,7 @@ void getTime(){
 
 //displays a hard code information about the current module for this on It should read "We are currently on version R.1 or 1.1. 
 void Version(){
-menuCountPtr=70;
+menuCountPtr=100;
 sys_req(WRITE,DEFAULT_DEVICE,VERSION,&menuCountPtr);
 comHand();
 }
