@@ -117,21 +117,16 @@ int *polling(char *buffer, int *count){
 		serial_print(&buffer[bufferCount]);
 		bufferCount=bufferCount+1;		
 		*count=*count+1;
-		//buffer fills and breaks out - should be 100 using for tests
-		if(bufferCount==5){
-		serial_print("\n");
-		break;
-		}
-		//ascii for enter (have to press and hold because just pressing gets the carriage returns instead)
-		if(inb(COM1)==0x0D){
-		serial_print("enter");
-		serial_print("\n");
+		
+		if(letter==0x0D){
+		//serial_print("enter");
+		//serial_print("\n");
 		break;
 		}
 		//backspace - code 127 / 0x08 / '\b'
 		if(letter==127){	
-		serial_print("back");
-		bufferCount=bufferCount-1;
+		//serial_print("back");
+		bufferCount=bufferCount-2;
 		//buffer[bufferCount]=127;
 		count=count-1;
 		//bufferCount=bufferCount+1;
@@ -159,7 +154,12 @@ int *polling(char *buffer, int *count){
 		
 		//}
 		
-		
+		//buffer fills and breaks out - should be 100 using for tests
+		if(bufferCount==5){
+		serial_print("\n");
+		break;
+		}
+		//ascii for enter 0x0D
 		
 		}
 

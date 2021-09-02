@@ -8,7 +8,7 @@ int quit=0;
 int bufferTrack=0;
 
 char userInput[100];
-char MENU[]={"\n\n\n0: help \n1: Set Date \n2: Set Time \n3: Display Date \n4: Display Time\n5: Version\n6: Shut Down \n"};
+char MENU[]={"\n\n\n0: help \n1: Set Date \n2: Set Time \n3: Display Date \n4: Display Time\n5: Version\n6: Shut Down \n Please enter only the single digit corresponding with the option you desire and then press 'Enter'\n"};
 char CONFIRMATION[]={"Enter y + enter to shutdown press n + enter to go back to menu"}; 
 char VERSION[]={"1.1"};
 char HELP[]={};
