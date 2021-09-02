@@ -107,7 +107,7 @@ int *polling(char *buffer, int *count){
 	//klogv("got to polling from sys_req(read..");
 	while(1){
 	
-	
+	//int sentinal = 0;
 //if key is pressed store character into the buffer
 		
 		if(inb(COM1+5)&1){
@@ -117,21 +117,27 @@ int *polling(char *buffer, int *count){
 		serial_print(&buffer[bufferCount]);
 		bufferCount=bufferCount+1;		
 		*count=*count+1;
+		//buffer fills and breaks out - should be 100 using for tests
 		if(bufferCount==5){
+		serial_print("\n");
 		break;
 		}
 		//ascii for enter (have to press and hold because just pressing gets the carriage returns instead)
 		if(inb(COM1)==0x0D){
+		serial_print("enter");
+		serial_print("\n");
 		break;
 		}
-		if(inb(COM1)==127){	
+		//backspace - code 127 / 0x08 / '\b'
+		if(letter==127){	
+		serial_print("back");
 		bufferCount=bufferCount-1;
-		buffer[bufferCount]=127;
+		//buffer[bufferCount]=127;
 		count=count-1;
-		bufferCount=bufferCount+1;
+		//bufferCount=bufferCount+1;
 		serial_print("\b \b");
 		}
-		//ascii for backspace 127. 
+		
 		
 		if(inb(COM1)==13){
 		serial_print("\r \r");

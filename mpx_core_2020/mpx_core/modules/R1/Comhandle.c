@@ -19,10 +19,12 @@ int i=0;
 int comHand(){
 
 menuCountPtr=70;
+//prints menu
 sys_req(WRITE,DEFAULT_DEVICE,MENU,&menuCountPtr);
 
 memset(userInput, '\0', 100);
 countPtr=100;
+//get input from polling
 sys_req(READ,DEFAULT_DEVICE,userInput,&countPtr);
 bufferTrack=countPtr;
 while(!quit){
