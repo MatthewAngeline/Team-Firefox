@@ -135,33 +135,37 @@ int *polling(char *buffer, int *count){
 		}
 		}
 		//ascii for down array is 13 and will drop down to a new line. not sure how it affects the buffer because in theory it should create a new line so should we reset buffer back to 0? 
-		else if(letter==13){
-		serial_print("\r \r");
-		}
-		else if(letter==10){
-		serial_print("\n \n");
-		}
 		
-		//ascii for right arrow is 77
-		else if(letter==77){
-		//bufferCount++;
-		serial_print("right arrow");
-		
+		//Checks arrows
+		else if(letter=='\033'){
+		inb(COM1);
+		letter = inb(COM1);
+			if(letter=='A'){//Up arrow
+			serial_print("\033[A");
+			}
+			else if(letter=='B'){//Down arrow
+			serial_print("\033[B");
+			}
+			else if(letter=='C'){//Right arrow
+			//bufferCount=bufferCount+1;
+			serial_print("\033[C");
+			}
+			else if(letter=='D'){//Left arrow 'D'
+			//bufferCount=bufferCount-1;
+			serial_print("\033[D");
+			}
 	        }
-	        //ascii for left arrow is 75
-		else if(letter==75){
-		bufferCount=bufferCount-1;
-		serial_print("\b");
-		}
-		//delete ascii is 0x7f
-		//if(letter==0x7f){
+	        /*
+		delete ascii is 0x7f
+		if(letter==0x7f){
 		
-		//}
+		}
+		*/
 		//regular characters
 		else{
 		buffer[bufferCount] = letter;
 		//buffer fills and breaks out - should be 100 using for tests
-		if(bufferCount==20){
+		if(bufferCount==6){
 		serial_print("\n");
 		break;
 		}
