@@ -150,13 +150,14 @@ int *polling(char *buffer, int *count){
 	        }
 	        //ascii for left arrow is 75
 		else if(letter==75){
-		bufferCount=bufferCount-2;
+		bufferCount=bufferCount-1;
 		serial_print("\b");
 		}
 		//delete ascii is 0x7f
 		//if(letter==0x7f){
 		
 		//}
+		//regular characters
 		else{
 		buffer[bufferCount] = letter;
 		//buffer fills and breaks out - should be 100 using for tests
@@ -175,6 +176,7 @@ int *polling(char *buffer, int *count){
 
 		
 		}
+		
 		klogv("Leaving While Loop");
 
 

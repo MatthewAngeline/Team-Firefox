@@ -73,6 +73,7 @@ comHand();
 //if 5 is pressed get version
 if(userInput[0]=='5'){
 klogv("Entering the Version");
+serial_print(&userInput[0]);
 Version();
 clearInput();
 comHand();
@@ -80,6 +81,7 @@ comHand();
 //if 6 is pressed shutdown
 if(userInput[0]=='6'){
 klogv("Got to shutdown protocol");
+serial_print(&userInput[0]);
 sys_req(WRITE,DEFAULT_DEVICE,CONFIRMATION,&menuCountPtr);
 memset(userInput, '\0', 100);
 countPtr=100;
@@ -117,7 +119,8 @@ void getDate(){
 }
 //allows the user to set the time that they would like their system to read. 1-12 unless military time then 1-24 should be the hours and 1-59 for minutes and seconds. 
 void setTime(){
-//polling();
+//cli();
+//outb(0x70
 }
 //displays the set time that the user has set. If they havent added anything yet it will display a preset time. 
 void getTime(){
