@@ -8,26 +8,26 @@ int quit=0;
 int bufferTrack=0;
 
 char userInput[100];
-<<<<<<< HEAD
-char MENU[]={"\n\n\n0: help \n1: Set Date \n2: Set Time \n3: Display Date \n4: Display Time\n5: Version\n6: Shut Down \n Please enter only the single digit corresponding with the option you desire and then press 'Enter'\n"};
-=======
-char MENU[]={"\nFirefox MPX\n0: help \n1: Set Date \n2: Set Time \n3: Display Date \n4: Display Time\n5: Version\n6: Shut Down \nPlease enter your choice:"};
->>>>>>> 74929e8e534b71b02cd9c8c90e242557d3d13f4c
-char CONFIRMATION[]={"Enter y + enter to shutdown press n + enter to go back to menu"}; 
-char VERSION[]={"1.1 \nCompletion Date:9/08/21"};
+//<<<<<<< HEAD
+//char MENU[]={"\n\n\n0: help \n1: Set Date \n2: Set Time \n3: Display Date \n4: Display Time\n5: Version\n6: Shut Down \n Please enter only the single digit corresponding with the option you desire and then press 'Enter'\n"};
+//=======
+char MENU[]={"\nFirefox MPX\n0: help \n1: Set Date \n2: Set Time \n3: Display Date \n4: Display Time\n5: Version\n6: Shut Down \nPlease enter your choice:\n"};
+//>>>>>>> 74929e8e534b71b02cd9c8c90e242557d3d13f4c
+char CONFIRMATION[]={"Enter y + enter to shutdown press n + enter to go back to menu:\n"}; 
+char VERSION[]={"1.1 \nCompletion Date:9/08/21\n"};
 char HELP[]={};
 
 
-int i=0;
+
 //main file to run all the applications and used to create the menu driven logic.
 int comHand(){
 
-<<<<<<< HEAD
+//<<<<<<< HEAD
 menuCountPtr=80;
-=======
+//=======
 menuCountPtr=70;
 //prints menu
->>>>>>> 08903ebfbb683c6a35dd98e483b0e0afb6a1de7b
+//>>>>>>> 08903ebfbb683c6a35dd98e483b0e0afb6a1de7b
 sys_req(WRITE,DEFAULT_DEVICE,MENU,&menuCountPtr);
 
 memset(userInput, '\0', 100);
@@ -35,35 +35,65 @@ countPtr=100;
 //get input from polling
 sys_req(READ,DEFAULT_DEVICE,userInput,&countPtr);
 bufferTrack=countPtr;
-while(!quit){
-if(userInput[0] == 0){
 
+
+while(!quit){
+if(userInput[0] == '0'){
+klogv("made it to help");
+
+clearInput();
+comHand();
 }
 //if 1 is pressed set date
-if(userInput[0]==1){
+if(userInput[0]=='1'){
+klogv("made it to set date");
+clearInput();
+comHand();
 }
 //if 2 is pressed set time
-if(userInput[0]==2){
+if(userInput[0]=='2'){
+klogv("made it to set time");
+
+
+clearInput();
+comHand();
 }
 //if 3 is pressed get Date
-if(userInput[0]==3){
+if(userInput[0]=='3'){
+klogv("made it to get date");
+clearInput();
+comHand();
 }
 //if 4 is pressed get time
-if(userInput[0]==4){
+if(userInput[0]=='4'){
+klogv("made it to get time");
+clearInput();
+comHand();
 }
 //if 5 is pressed get version
-if(userInput[0]==5){
+if(userInput[0]=='5'){
 klogv("Entering the Version");
 Version();
+clearInput();
+comHand();
 }
 //if 6 is pressed shutdown
-if(userInput[0]==6){
+if(userInput[0]=='6'){
 klogv("Got to shutdown protocol");
 sys_req(WRITE,DEFAULT_DEVICE,CONFIRMATION,&menuCountPtr);
-if(userInput[0]=='y')
+memset(userInput, '\0', 100);
+countPtr=100;
+clearInput();
+//get input from polling
+sys_req(READ,DEFAULT_DEVICE,userInput,&countPtr);
+bufferTrack=countPtr;
+if(userInput[0]=='y'){
 quit=1;
+break;
+}
 else if(userInput[0]=='n'){
 comHand();
+clearInput();
 }
 
 
@@ -103,6 +133,14 @@ comHand();
 //displays hard coded information about each of the modules that have been added that the user can use. 
 void Help(){
 
+}
+void clearInput(){
+int i=0;
+while(i<5){
+userInput[i]='\0';
+i=i+1;
+}
+i=0;
 }
 
 

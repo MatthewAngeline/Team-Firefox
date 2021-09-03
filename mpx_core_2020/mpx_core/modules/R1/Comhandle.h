@@ -16,3 +16,4 @@ void Version();
 
 void Help();
 
+void clearInput();
