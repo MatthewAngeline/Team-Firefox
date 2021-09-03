@@ -2,17 +2,19 @@
 #include "Comhandle.h"
 #include "../mpx_supt.h"
 #include "../../include/string.h"
+
+
 int countPtr;
 int menuCountPtr;
 int quit=0;
 int bufferTrack=0;
 
 char userInput[100];
-//<<<<<<< HEAD
+
 //char MENU[]={"\n\n\n0: help \n1: Set Date \n2: Set Time \n3: Display Date \n4: Display Time\n5: Version\n6: Shut Down \n Please enter only the single digit corresponding with the option you desire and then press 'Enter'\n"};
-//=======
+
 char MENU[]={"\nFirefox MPX\n0: help \n1: Set Date \n2: Set Time \n3: Display Date \n4: Display Time\n5: Version\n6: Shut Down \nPlease enter your choice:\n"};
-//>>>>>>> 74929e8e534b71b02cd9c8c90e242557d3d13f4c
+
 char CONFIRMATION[]={"Enter y + enter to shutdown press n + enter to go back to menu:\n"}; 
 char VERSION[]={"1.1 \nCompletion Date:9/08/21\n"};
 char HELP[]={};
@@ -22,12 +24,11 @@ char HELP[]={};
 //main file to run all the applications and used to create the menu driven logic.
 int comHand(){
 
-//<<<<<<< HEAD
+
 menuCountPtr=80;
-//=======
+
 menuCountPtr=70;
 //prints menu
-//>>>>>>> 08903ebfbb683c6a35dd98e483b0e0afb6a1de7b
 sys_req(WRITE,DEFAULT_DEVICE,MENU,&menuCountPtr);
 
 memset(userInput, '\0', 100);
@@ -53,7 +54,10 @@ comHand();
 //if 2 is pressed set time
 if(userInput[0]=='2'){
 klogv("made it to set time");
+int hours = 10;
 
+
+serial_print((char)hours);
 
 clearInput();
 comHand();
