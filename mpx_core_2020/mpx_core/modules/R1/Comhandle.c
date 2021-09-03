@@ -54,10 +54,6 @@ comHand();
 //if 2 is pressed set time
 if(userInput[0]=='2'){
 klogv("made it to set time");
-int hours = 10;
-
-
-serial_print((char)hours);
 
 clearInput();
 comHand();
