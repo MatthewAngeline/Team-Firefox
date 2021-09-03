@@ -18,11 +18,17 @@ int i=0;
 //main file to run all the applications and used to create the menu driven logic.
 int comHand(){
 
+<<<<<<< HEAD
 menuCountPtr=80;
+=======
+menuCountPtr=70;
+//prints menu
+>>>>>>> 08903ebfbb683c6a35dd98e483b0e0afb6a1de7b
 sys_req(WRITE,DEFAULT_DEVICE,MENU,&menuCountPtr);
 
 memset(userInput, '\0', 100);
 countPtr=100;
+//get input from polling
 sys_req(READ,DEFAULT_DEVICE,userInput,&countPtr);
 bufferTrack=countPtr;
 while(!quit){

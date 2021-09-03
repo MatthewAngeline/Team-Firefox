@@ -136,16 +136,18 @@ int *polling(char *buffer, int *count){
 		else if(letter==10){
 		serial_print("\n \n");
 		}
-		if(inb(COM1)==RIGHT_ARROW){
-		bufferCount++;
 		
-	        }
-		if(inb(COM1)==LEFT_ARROW){
-		bufferCount--;
+		//NEED TO ASK TA SAM about the codes for left and right arrow because idk how to get those to work 
+		//if(inb(COM1)==RIGHT_ARROW){
+		//bufferCount++;
 		
-		}
+	      //  }
+		//if(inb(COM1)==LEFT_ARROW){
+		//bufferCount--;
+		
+		//}
 		//delete ascii is 0x7f
-		//if(inb(COM1)==0x7f){
+		//if(letter==0x7f){
 		
 		//}
 		else{
