@@ -10,10 +10,8 @@ int quit=0;
 int bufferTrack=0;
 
 char userInput[100];
-
-//char MENU[]={"\n\n\n0: help \n1: Set Date \n2: Set Time \n3: Display Date \n4: Display Time\n5: Version\n6: Shut Down \n Please enter only the single digit corresponding with the option you desire and then press 'Enter'\n"};
-
-char MENU[]={"\nFirefox MPX\n0: help \n1: Set Date \n2: Set Time \n3: Display Date \n4: Display Time\n5: Version\n6: Shut Down \nPlease enter your choice:\n"};
+char MENU[]={"\nFirefox MPX\n0: help \n1: Set Date \n2: Set Time \n3: Display Date \n4: Display Time\n5: Version\n6: Shut Down \nPlease enter your choice, one option at a time, entering only the number corresponding with the option:\n"};
+char WRONGFORMAT[]={"Please insert the correct format\n"};
 
 char CONFIRMATION[]={"Enter y + enter to shutdown press n + enter to go back to menu:\n"}; 
 char VERSION[]={"1.1 \nCompletion Date:9/08/21\n"};
@@ -41,7 +39,7 @@ bufferTrack=countPtr;
 while(!quit){
 if(userInput[0] == '0'){
 klogv("made it to help");
-
+Help();
 clearInput();
 comHand();
 }
@@ -73,6 +71,7 @@ comHand();
 //if 5 is pressed get version
 if(userInput[0]=='5'){
 klogv("Entering the Version");
+
 Version();
 clearInput();
 comHand();
@@ -80,6 +79,7 @@ comHand();
 //if 6 is pressed shutdown
 if(userInput[0]=='6'){
 klogv("Got to shutdown protocol");
+
 sys_req(WRITE,DEFAULT_DEVICE,CONFIRMATION,&menuCountPtr);
 memset(userInput, '\0', 100);
 countPtr=100;
@@ -132,7 +132,8 @@ comHand();
 }
 //displays hard coded information about each of the modules that have been added that the user can use. 
 void Help(){
-
+char HELP[] = {"Option 1: Set Date. \n\t Allows the user to set the Date should the listed date be incorrect.\nOption 2: Set Time. \n\t Allows the user to set the Time should the listed date be incorrect.\nOption 3: Display Date. \n\t Prints the date that is set to the screen.\nOption 4: Display Time. \n\t Prints the time that is set to the screen.\nOption 5: Version. \n\t Prints the currect Version of the project to the screen.\nOption 6: Shut Down. \n\t Begins the shutdown protocol for the system.\n"};
+sys_req(WRITE,DEFAULT_DEVICE,HELP,&menuCountPtr);
 }
 void clearInput(){
 int i=0;
@@ -143,4 +144,32 @@ i=i+1;
 i=0;
 }
 
+//param - decimal number - returns BCD
+unsigned int decToBCD(int num){
+	if (num == 0) return 0000;
+	else if (num == 1) return 0001;
+	else if (num == 2) return 0010;
+	else if (num == 3) return 0011;
+	else if (num == 4) return 0100;
+	else if (num == 5) return 0101;
+	else if (num == 6) return 0110;
+	else if (num == 7) return 0111;
+	else if (num == 8) return 1000;
+	else return 1001;
+
+}
+//param - BCD - returns decimal
+unsigned int BCDToDec(int num){
+	if (num == 0000) return 0;
+	else if (num == 0001) return 1;
+	else if (num == 0010) return 2;
+	else if (num == 0011) return 3;
+	else if (num == 0100) return 4;
+	else if (num == 0101) return 5;
+	else if (num == 0110) return 6;
+	else if (num == 0111) return 7;
+	else if (num == 1000) return 8;
+	else return 9;
+
+}
 
