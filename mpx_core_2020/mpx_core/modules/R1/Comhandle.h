@@ -19,3 +19,5 @@ void Help();
 void clearInput();
 
 unsigned int decToBCD(int num);
+
+unsigned int BCDToDec(int num);
