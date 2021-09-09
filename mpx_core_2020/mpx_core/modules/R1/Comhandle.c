@@ -14,7 +14,7 @@ char userInput[100];
 char time[10];
 char MENU[]={"\nFirefox MPX\n0: help \n1: Set Date \n2: Set Time \n3: Display Date \n4: Display Time\n5: Version\n6: Shut Down \nPlease enter your choice, one option at a time, entering only the number corresponding with the option:\n"};
 char WRONGFORMAT[]={"Please insert the correct format\n"};
-
+char WRONGTIME[]={"Please insert a valid time\n"};
 char CONFIRMATION[]={"Enter y + enter to shutdown press n + enter to go back to menu:\n"}; 
 char VERSION[]={"1.1 \nCompletion Date:9/08/21\n"};
 char HELP[]={};
@@ -119,6 +119,11 @@ void getDate(){
 }
 //allows the user to set the time that they would like their system to read. 1-12 unless military time then 1-24 should be the hours and 1-59 for minutes and seconds. 
 void setTime(){
+
+	int hrsB = 0;
+	int minB = 0;
+	int secB = 0;
+	
 	char clock[] = {"Please enter the current time in HH:MM:SS format.\n"};
 	sys_req(WRITE,DEFAULT_DEVICE,clock,&menuCountPtr);
 	cli();
@@ -128,10 +133,23 @@ void setTime(){
 	//get input from polling
 	sys_req(READ,DEFAULT_DEVICE,time,&countPtr);
 	
-
-	unsigned int hrsB = (time[0] * 10 + time[1])-6;
-	unsigned int minB = (time[3] * 10 + time[4])-10;
-	unsigned int secB = (time[6] * 10 + time[7])+7;
+	
+	//takes the time from 0 and 1 for hours, takes the time from 3,4 for minutes and takes the time from 6,7 for seconds does a bit of math and figures out the corrected time. 
+	
+	 hrsB = ((time[0] * 10 + time[1]))-30;
+	 minB = (time[3] * 10 + time[4])-10;
+	 secB = (time[6] * 10 + time[7]);
+	 
+	 
+	
+	
+	 
+	 //set up some kindof check to ensure they dont insert an invalid hour, minute,or seconds... 
+	/*if(hrsB > 24  || minB>60  || secB > 60 ){
+	sys_req(WRITE,DEFAULT_DEVICE,WRONGTIME,&menuCountPtr);
+	setTime();
+	}*/
+	
 
 	outb(0x70, 0x04);
 	outb(0x71, hrsB);
@@ -141,7 +159,7 @@ void setTime(){
 	outb(0x71, secB);
 
 	sti();
-
+	
 
 
 //polling();
@@ -164,7 +182,7 @@ void getTime(){
 
 
 
-	int hr = hrs_2-4;
+	int hr = hrs_2;
 	int mi  = min;
 	int se = sec;
 	
@@ -175,9 +193,11 @@ void getTime(){
 	itoa(hr,hr_Ptr);
 	itoa(mi,min_Ptr);
 	itoa(se,sec_Ptr);
-	
+	char colon[] = {":"};
 	sys_req(WRITE,DEFAULT_DEVICE,hr_Ptr,&menuCountPtr);
+	sys_req(WRITE,DEFAULT_DEVICE,colon,&menuCountPtr);
 	sys_req(WRITE,DEFAULT_DEVICE,min_Ptr,&menuCountPtr);
+	sys_req(WRITE,DEFAULT_DEVICE,colon,&menuCountPtr);
 	sys_req(WRITE,DEFAULT_DEVICE,sec_Ptr,&menuCountPtr);
 	
 }
