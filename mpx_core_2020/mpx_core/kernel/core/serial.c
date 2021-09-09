@@ -241,7 +241,7 @@ int *polling(char *buffer, int *count){
 		else{
 		buffer[bufferCount] = letter;
 		//buffer fills and breaks out - should be 100 using for tests
-		if(bufferCount==6){
+		if(bufferCount==50){
 		serial_print("\n");
 		break;
 		}
@@ -252,7 +252,7 @@ int *polling(char *buffer, int *count){
 		else{
 			buffer[bufferCount] = letter;
 			//buffer fills and breaks out - should be 100 using for tests
-			if(inputCount==6){
+			if(inputCount==50){
 			serial_print("\n");
 			break;
 			}

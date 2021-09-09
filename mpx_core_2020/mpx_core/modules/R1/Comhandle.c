@@ -2,6 +2,7 @@
 #include "Comhandle.h"
 #include "../mpx_supt.h"
 #include "../../include/string.h"
+#include <../include/core/io.h>
 
 
 int countPtr;
@@ -10,6 +11,7 @@ int quit=0;
 int bufferTrack=0;
 
 char userInput[100];
+char time[10];
 char MENU[]={"\nFirefox MPX\n0: help \n1: Set Date \n2: Set Time \n3: Display Date \n4: Display Time\n5: Version\n6: Shut Down \nPlease enter your choice, one option at a time, entering only the number corresponding with the option:\n"};
 char WRONGFORMAT[]={"Please insert the correct format\n"};
 
@@ -52,7 +54,7 @@ comHand();
 //if 2 is pressed set time
 if(userInput[0]=='2'){
 klogv("made it to set time");
-
+setTime();
 clearInput();
 comHand();
 }
@@ -65,6 +67,7 @@ comHand();
 //if 4 is pressed get time
 if(userInput[0]=='4'){
 klogv("made it to get time");
+getTime();
 clearInput();
 comHand();
 }
@@ -97,7 +100,6 @@ clearInput();
 }
 
 
-
 }
 }
 
@@ -117,12 +119,69 @@ void getDate(){
 }
 //allows the user to set the time that they would like their system to read. 1-12 unless military time then 1-24 should be the hours and 1-59 for minutes and seconds. 
 void setTime(){
+	char clock[] = {"Please enter the current time in HH:MM:SS format.\n"};
+	sys_req(WRITE,DEFAULT_DEVICE,clock,&menuCountPtr);
+	cli();
+	
+	memset(time, '\0', 50);
+	countPtr=50;
+	//get input from polling
+	sys_req(READ,DEFAULT_DEVICE,time,&countPtr);
+	
+
+	unsigned int hrsB = (time[0] * 10 + time[1])-6;
+	unsigned int minB = (time[3] * 10 + time[4])-10;
+	unsigned int secB = (time[6] * 10 + time[7])+7;
+
+	outb(0x70, 0x04);
+	outb(0x71, hrsB);
+	outb(0x70, 0x02);
+	outb(0x71, minB);
+	outb(0x70, 0x00);
+	outb(0x71, secB);
+
+	sti();
+
+
+
 //polling();
 }
 //displays the set time that the user has set. If they havent added anything yet it will display a preset time. 
-void getTime(){
 
+void getTime(){
+	menuCountPtr=100;
+	outb(0x70, 0x04);
+	unsigned char Bhrs = inb(0x71);
+	int hrs_2 = BCDToDec(Bhrs);
+
+	outb(0x70, 0x02);
+	unsigned char Bmin = inb(0x71);
+	int min = BCDToDec(Bmin);
+	
+	outb(0x70, 0x00);
+	unsigned char Bsec = inb(0x71);
+	int sec = BCDToDec(Bsec);
+
+
+
+	int hr = hrs_2-4;
+	int mi  = min;
+	int se = sec;
+	
+	char hr_Ptr[5];
+	char min_Ptr[5];
+	char sec_Ptr[5];
+	
+	itoa(hr,hr_Ptr);
+	itoa(mi,min_Ptr);
+	itoa(se,sec_Ptr);
+	
+	sys_req(WRITE,DEFAULT_DEVICE,hr_Ptr,&menuCountPtr);
+	sys_req(WRITE,DEFAULT_DEVICE,min_Ptr,&menuCountPtr);
+	sys_req(WRITE,DEFAULT_DEVICE,sec_Ptr,&menuCountPtr);
+	
 }
+
 
 //displays a hard code information about the current module for this on It should read "We are currently on version R.1 or 1.1. 
 void Version(){
@@ -146,6 +205,8 @@ i=0;
 
 //param - decimal number - returns BCD
 unsigned int decToBCD(int num){
+
+/*
 	if (num == 0) return 0000;
 	else if (num == 1) return 0001;
 	else if (num == 2) return 0010;
@@ -156,20 +217,75 @@ unsigned int decToBCD(int num){
 	else if (num == 7) return 0111;
 	else if (num == 8) return 1000;
 	else return 1001;
+	*/
+	
+	
+	unsigned int ones = 0; 
+	unsigned int tens = 0; 
+	unsigned int temp = 0; 
+	ones = num%10;
+	temp = num/10;
+	tens = temp<<4;
+	return (tens + ones);
+
+
 
 }
 //param - BCD - returns decimal
-unsigned int BCDToDec(int num){
-	if (num == 0000) return 0;
-	else if (num == 0001) return 1;
-	else if (num == 0010) return 2;
-	else if (num == 0011) return 3;
-	else if (num == 0100) return 4;
-	else if (num == 0101) return 5;
-	else if (num == 0110) return 6;
-	else if (num == 0111) return 7;
-	else if (num == 1000) return 8;
-	else return 9;
+
+
+int BCDToDec(unsigned char num){
+	
+	/*
+	if (num == 0000) return '0';
+	else if (num == 0001) return '1';
+	else if (num == 0010) return '2';
+	else if (num == 0011) return '3';
+	else if (num == 0100) return '4';
+	else if (num == 0101) return '5';
+	else if (num == 0110) return '6';
+	else if (num == 0111) return '7';
+	else if (num == 1000) return '8';
+	else return '9';
+	*/
+	
+
+
+    unsigned char d=  num & 0x0f;
+    int c = (num >> 4);
+    int dec = (c * 10) + d;
+
+    return dec;
+	
 
 }
+
+void itoa(int num, char* str){
+		int i = 0;
+	//	int b = 1;
+		
+		while(num != 0){
+			int a = num%10;
+			str[i++] = a + '0';
+			num = num/10;
+			}
+		str[i] = '\0';
+		
+		    int x,y;
+    char temp;
+
+    for( y= 0, x = i-1; y < x; y++, x--){
+        temp = str[y];
+        str[y] = str[x];
+        str[x] = temp;
+    }
+
+    if(str[0] == '\0'){
+        strcpy(str,"0");
+    }
+
+		
+}
+
+
 

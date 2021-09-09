@@ -20,4 +20,6 @@ void clearInput();
 
 unsigned int decToBCD(int num);
 
-unsigned int BCDToDec(int num);
+int BCDToDec(unsigned char num);
+
+void itoa(int num, char* str);
