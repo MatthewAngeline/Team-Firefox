@@ -68,7 +68,7 @@ int * keyboard_polling(char *buffer, int *count){
 
 			}
 		}
-		//ascii for down array is 13 and will drop down to a new line. not sure how it affects the buffer because in theory it should create a new line so should we reset buffer back to 0? 
+		
 		
 		//Checks arrows
 		else if(letter=='\033'){
@@ -130,6 +130,7 @@ int * keyboard_polling(char *buffer, int *count){
 				}
 				
 			}
+			//deleting last character in line
 			else if(inputCount-1==bufferCount){
 			buffer[bufferCount]='\0';
 			inputCount=inputCount-1;
@@ -141,7 +142,7 @@ int * keyboard_polling(char *buffer, int *count){
 			//serial_print("del");
 		}
 
-		//}
+		//regular characters
 		else{
 		buffer[bufferCount] = letter;
 		//buffer fills and breaks out - should be 100 using for tests
@@ -149,13 +150,13 @@ int * keyboard_polling(char *buffer, int *count){
 		serial_print("\n");
 		break;
 		}
-		//ascii for enter 0x0D
+		
 			
 
 
-			serial_print(&buffer[bufferCount]);
-			bufferCount=bufferCount+1;
-			inputCount=inputCount+1;
+		serial_print(&buffer[bufferCount]);
+		bufferCount=bufferCount+1;
+		inputCount=inputCount+1;
 			
 		}
 
