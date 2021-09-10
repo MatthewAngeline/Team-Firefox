@@ -15,9 +15,8 @@ char time[10];
 char date[10];
 char MENU[]={"\nFirefox MPX\n0: help \n1: Set Date \n2: Set Time \n3: Display Date \n4: Display Time\n5: Version\n6: Shut Down \nPlease enter your choice, one option at a time, entering only the number corresponding with the option:\n"};
 char WRONGFORMAT[]={"Please insert the correct format\n"};
-
 char CONFIRMATION[]={"Enter y + enter to shutdown press n + enter to go back to menu:\n"}; 
-char VERSION[]={"1.1 \nCompletion Date:9/08/21\n"};
+char VERSION[]={"1.1 \nCompletion Date:9/09/21\n"};
 char HELP[]={};
 
 
@@ -31,52 +30,53 @@ menuCountPtr=80;
 menuCountPtr=70;
 //prints menu
 sys_req(WRITE,DEFAULT_DEVICE,MENU,&menuCountPtr);
-
 memset(userInput, '\0', 100);
 countPtr=100;
-//get input from polling
+//get input from polling and stores it into userInput
 sys_req(READ,DEFAULT_DEVICE,userInput,&countPtr);
 bufferTrack=countPtr;
 
 
 while(!quit){
+//if 0 is stored into the userInput at location 0
 if(userInput[0] == '0'){
 Help();
 clearInput();
 comHand();
 }
-//if 1 is pressed set date
+//if 1 is stored into the userInput at location 0
 if(userInput[0]=='1'){
 Setdate();
 clearInput();
 comHand();
 }
-//if 2 is pressed set time
+//if 2 is  is stored into the userInput at location 0
 if(userInput[0]=='2'){
 setTime();
 clearInput();
 comHand();
 }
-//if 3 is pressed get Date
+//if 3 is stored into the userInput at location 0
 if(userInput[0]=='3'){
 getDate();
 clearInput();
 comHand();
 }
-//if 4 is pressed get time
+//if 4 is stored into the userInput at location 0
 if(userInput[0]=='4'){
 getTime();
 clearInput();
 comHand();
 }
-//if 5 is pressed get version
+//if 5 is stored into the userInput at location 0
 if(userInput[0]=='5'){
 Version();
 clearInput();
 comHand();
 }
-//if 6 is pressed shutdown
+//if 6 is stored into the userInput at location 0
 if(userInput[0]=='6'){
+	//sends the confirmation to the terminal 
 sys_req(WRITE,DEFAULT_DEVICE,CONFIRMATION,&menuCountPtr);
 memset(userInput, '\0', 100);
 countPtr=100;
@@ -84,11 +84,12 @@ clearInput();
 //get input from polling
 sys_req(READ,DEFAULT_DEVICE,userInput,&countPtr);
 bufferTrack=countPtr;
-
+//if y is stores it at location 0 enter this statement
 if(userInput[0]=='y'){
 quit=1;
 break;
 }
+//if n is stores it at location 0 enter this statement
 else if(userInput[0]=='n'){
 		comHand();
 		clearInput();
@@ -112,24 +113,27 @@ void Setdate(){
 		sys_req(WRITE,DEFAULT_DEVICE,clock,&menuCountPtr);
 		
 		sys_req(READ,DEFAULT_DEVICE,date,&menuCountPtr);
+	//stores the string into a token from the start of date until the first /
 		char *token = strtok(date, "/");
 		int mon = atoi(token);
-			
+	//stores the next part of the date until the next /
 		token = strtok(NULL,"/");
 		int day = atoi(token);
-
+	//stores the next part of the date until the return carriage
 		token = strtok(NULL, "/r");
+	//converts the token into an interger
 		int yr= atoi(token);
 			int cond = 1;
 			int recursive_check = 1;
-			
+	//while loop to verify that the conditions are met
 		while(cond){
-
+			//checks if its a valid month within the Geogarian Calander
 			if (mon < 13 && mon>0){
+				//if its January, March, May, August, October or december and verifies that it has at least 31 days and more than 0 days.
 				if((mon == 1 || mon == 3 || mon == 5|| mon == 7|| mon == 8|| mon == 10|| mon == 12) && day <= 31 && day >0){
 						cond = 0;
 						
-				}
+				}//checks if febuary on a normal calander year has 28 days or more than 0 days
 				else if ((mon ==2) && day <= 28 && day > 0){
 					cond = 0;
 					
@@ -140,11 +144,11 @@ void Setdate(){
 				else if (mon == 2 && yr%4 == 0 && yr != 0 && day <= 29 && day > 0){
 					cond = 0;
 				}					
-				
+				//checks the other valid months to see if they have 30 days or more than 0
 				else if ((mon == 4 || mon == 6 || mon == 9|| mon == 11) && day <= 30 && day >0){
 					cond = 0;
 				}
-				
+				//if all conditions fail inputs a fail sequence
 				else{
 					sys_req(WRITE,DEFAULT_DEVICE,"Invalid input\n",&menuCountPtr);
 					Setdate();
@@ -152,11 +156,12 @@ void Setdate(){
 					cond = 0;
 					
 				}
-				
+				//is it a valid year greater than 0 less than 100
 				if(yr >=0 && yr <=99){
 				cond = 0;
 				}
 				else{
+					//if not it sends an error message to the user
 					sys_req(WRITE,DEFAULT_DEVICE,"Invalid year\n",&menuCountPtr);
 					Setdate();
 					recursive_check = 0;
@@ -165,12 +170,13 @@ void Setdate(){
 
 			}
 			else{
+				//invalid date try again...
 				sys_req(WRITE,DEFAULT_DEVICE,"Invalid input\n",&menuCountPtr);
 					Setdate();
 					cond = 0;
 					recursive_check  = 0;
 			}
-		}
+		}			//is it inside of the recursive call if not stores the information 
 					if(recursive_check == 1){
 						unsigned int monB = decToBCD(mon);
 						unsigned int dayB = decToBCD(day);
@@ -181,8 +187,8 @@ void Setdate(){
 						outb(0x71, dayB);
 						outb(0x70, 0x09);
 						outb(0x71, yrB);
-						klogv("Stored date");
 					}
+	//reenables interrupts
 		sti();
 
 }
@@ -190,14 +196,15 @@ void Setdate(){
 void getDate(){
 
 	menuCountPtr=100;
+	//retrieves day from 0x07
 	outb(0x70, 0x07);
 	unsigned char Bday = inb(0x71);
 	int day_2 = BCDToDec(Bday);
-
+	//retrieves month from 0x08
 	outb(0x70, 0x08);
 	unsigned char Bmon= inb(0x71);
 	int mon = BCDToDec(Bmon);
-	
+	//retrieves year from 0x09
 	outb(0x70, 0x09);
 	unsigned char Byr = inb(0x71);
 	int yr = BCDToDec(Byr);
@@ -205,11 +212,11 @@ void getDate(){
 	char day_Ptr[3];
 	char mon_Ptr[3];
 	char yr_Ptr[3];
-	
+	//converts day,month year into characters
 	itoa(day_2,day_Ptr);
 	itoa(mon,mon_Ptr);
 	itoa(yr,yr_Ptr);
-	
+	//displays date to terminal seperated by /
 	sys_req(WRITE,DEFAULT_DEVICE,mon_Ptr,&menuCountPtr);
 	sys_req(WRITE,DEFAULT_DEVICE,"/",&menuCountPtr);
 	sys_req(WRITE,DEFAULT_DEVICE,day_Ptr,&menuCountPtr);
@@ -239,7 +246,7 @@ void setTime(){
 
 		token = strtok(NULL, "/r");
 		int sec= atoi(token);
-
+	//is it a valid time hrs less than 24, minutes less than 60 and greater than or equal to 0 and same with seconds.
 			if (hr < 24 && hr>=0 &&min <60 && min>=0 && sec<60 && sec>=0){
 				cond = 0;
 				unsigned int hrsB = decToBCD(hr);
@@ -253,11 +260,13 @@ void setTime(){
 				outb(0x71, secB);
 		}
 		else{
+			//if not display an error message
 			sys_req(WRITE,DEFAULT_DEVICE,"Invalid input\n",&menuCountPtr);
 			setTime();
 			cond = 0;
 		}
 	}
+	//reenables interrupts
 		sti();
 
 
@@ -265,27 +274,31 @@ void setTime(){
 //displays the set time that the user has set. If they havent added anything yet it will display a preset time. 
 
 void getTime(){
+	//retrieves hrs from 0x04
 	menuCountPtr=100;
 	outb(0x70, 0x04);
 	unsigned char Bhrs = inb(0x71);
+	//converts it to decimal 
 	int hrs_2 = BCDToDec(Bhrs);
-
+	//retrieves minutes from 0x02
 	outb(0x70, 0x02);
 	unsigned char Bmin = inb(0x71);
+	//converts it to decimal
 	int min = BCDToDec(Bmin);
-	
+	//stores seconds from 0x00
 	outb(0x70, 0x00);
 	unsigned char Bsec = inb(0x71);
+	//converts it to decimal
 	int sec = BCDToDec(Bsec);
 	
 	char hr_Ptr[3];
 	char min_Ptr[3];
 	char sec_Ptr[3];
-	
+	//converts interger to a character 
 	itoa(hrs_2,hr_Ptr);
 	itoa(min,min_Ptr);
 	itoa(sec,sec_Ptr);
-	
+	//writes the date into teriminal seperated by :
 	sys_req(WRITE,DEFAULT_DEVICE,hr_Ptr,&menuCountPtr);
 	sys_req(WRITE,DEFAULT_DEVICE,":",&menuCountPtr);
 	sys_req(WRITE,DEFAULT_DEVICE,min_Ptr,&menuCountPtr);
@@ -298,20 +311,25 @@ void getTime(){
 //displays a hard code information about the current module for this on It should read "We are currently on version R.1 or 1.1. 
 void Version(){
 menuCountPtr=100;
+	//writes a prerecorded version update to terminal
 sys_req(WRITE,DEFAULT_DEVICE,VERSION,&menuCountPtr);
 comHand();
 }
 //displays hard coded information about each of the modules that have been added that the user can use. 
 void Help(){
+	//displays this message to terminal
 char HELP[] = {"Option 1: Set Date. \n\t Allows the user to set the Date should the listed date be incorrect.\nOption 2: Set Time. \n\t Allows the user to set the Time should the listed date be incorrect.\nOption 3: Display Date. \n\t Prints the date that is set to the screen.\nOption 4: Display Time. \n\t Prints the time that is set to the screen.\nOption 5: Version. \n\t Prints the currect Version of the project to the screen.\nOption 6: Shut Down. \n\t Begins the shutdown protocol for the system.\n"};
 sys_req(WRITE,DEFAULT_DEVICE,HELP,&menuCountPtr);
 }
+
 void clearInput(){
 int i=0;
-while(i<5){
+	//changes all values in buffer to null terminals to empty the buffer.
+while(i<50){
 userInput[i]='\0';
 i=i+1;
 }
+	//resets i to be 0 at the end so it can be reused 
 i=0;
 }
 
