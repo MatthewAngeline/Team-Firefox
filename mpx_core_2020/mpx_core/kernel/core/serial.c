@@ -91,11 +91,13 @@ int set_serial_in(int device)
   return NO_ERROR;
 }
 
+/*
+polling
+Parameters: buffer- a pointer that points to the character array, buffer, that stores user input
+            count- an integer representing the size of the buffer
+return: returns an integer that is the size of the array
+*/
 int *polling(char *buffer, int *count){
-// insert your code to gather keyboard input via the technique of polling.
-// You must validat each key and handle special keys such as delete, back space, and
-// arrow keys
-
-keyboard_polling(buffer,count);
-return 0;
+  keyboard_polling(buffer,count);
+  return 0;
 }
