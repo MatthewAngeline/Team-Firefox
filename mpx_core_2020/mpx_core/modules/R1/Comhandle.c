@@ -334,7 +334,7 @@ i=0;
 }
 
 //param - decimal number - returns BCD
-//utilized from internet: https://stackoverflow.com/questions/35370200/converting-decimal-to-bcd
+//utilized from internet: https://stackoverflow.com/questions/35370200/converting-decimal-to-bcd user: user3528438
 unsigned int decToBCD(int num){
 	
 	unsigned int ones = 0; 
