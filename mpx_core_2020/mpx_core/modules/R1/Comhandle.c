@@ -359,6 +359,7 @@ int BCDToDec(unsigned char num){
 	
 }
 
+//Converts integer to string data type
 void itoa(int num, char* str){
 	int i = 0;
 		
