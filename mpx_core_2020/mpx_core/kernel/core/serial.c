@@ -1,9 +1,4 @@
-/*
-  ----- serial.c -----
 
-  Description..: Contains methods and variables used for
-    serial input and output.
-*/
 
 #include <stdint.h>
 #include <string.h>
@@ -106,7 +101,6 @@ int *polling(char *buffer, int *count){
 // insert your code to gather keyboard input via the technique of polling.
 // You must validat each key and handle special keys such as delete, back space, and
 // arrow keys
-	//klogv("got to polling from sys_req(read..");
 	bufferCount=0;
 	buffer[bufferCount]='\0';
 	int inputCount=0;
@@ -241,22 +235,11 @@ int *polling(char *buffer, int *count){
 		else{
 		buffer[bufferCount] = letter;
 		//buffer fills and breaks out - should be 100 using for tests
-		if(bufferCount==50){
+		if(bufferCount==20){
 		serial_print("\n");
 		break;
 		}
 		//ascii for enter 0x0D
-		
-
-		//regular characters
-		else{
-			buffer[bufferCount] = letter;
-			//buffer fills and breaks out - should be 100 using for tests
-			if(inputCount==50){
-			serial_print("\n");
-			break;
-			}
-			//ascii for enter 0x0D
 			
 
 
@@ -269,12 +252,10 @@ int *polling(char *buffer, int *count){
 		
 
 		
+	
 		}
 		}
-		}
-		klogv("Leaving While Loop");
 
 
 return count;
 }
-

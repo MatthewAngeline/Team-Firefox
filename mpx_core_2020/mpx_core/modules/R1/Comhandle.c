@@ -6,15 +6,16 @@
 
 
 int countPtr;
-int menuCountPtr;
+int menuCountPtr=99;
 int quit=0;
 int bufferTrack=0;
 
 char userInput[100];
 char time[10];
+char date[10];
 char MENU[]={"\nFirefox MPX\n0: help \n1: Set Date \n2: Set Time \n3: Display Date \n4: Display Time\n5: Version\n6: Shut Down \nPlease enter your choice, one option at a time, entering only the number corresponding with the option:\n"};
 char WRONGFORMAT[]={"Please insert the correct format\n"};
-char WRONGTIME[]={"Please insert a valid time\n"};
+
 char CONFIRMATION[]={"Enter y + enter to shutdown press n + enter to go back to menu:\n"}; 
 char VERSION[]={"1.1 \nCompletion Date:9/08/21\n"};
 char HELP[]={};
@@ -40,49 +41,42 @@ bufferTrack=countPtr;
 
 while(!quit){
 if(userInput[0] == '0'){
-klogv("made it to help");
 Help();
 clearInput();
 comHand();
 }
 //if 1 is pressed set date
 if(userInput[0]=='1'){
-klogv("made it to set date");
+Setdate();
 clearInput();
 comHand();
 }
 //if 2 is pressed set time
 if(userInput[0]=='2'){
-klogv("made it to set time");
 setTime();
 clearInput();
 comHand();
 }
 //if 3 is pressed get Date
 if(userInput[0]=='3'){
-klogv("made it to get date");
+getDate();
 clearInput();
 comHand();
 }
 //if 4 is pressed get time
 if(userInput[0]=='4'){
-klogv("made it to get time");
 getTime();
 clearInput();
 comHand();
 }
 //if 5 is pressed get version
 if(userInput[0]=='5'){
-klogv("Entering the Version");
-
 Version();
 clearInput();
 comHand();
 }
 //if 6 is pressed shutdown
 if(userInput[0]=='6'){
-klogv("Got to shutdown protocol");
-
 sys_req(WRITE,DEFAULT_DEVICE,CONFIRMATION,&menuCountPtr);
 memset(userInput, '\0', 100);
 countPtr=100;
@@ -90,16 +84,15 @@ clearInput();
 //get input from polling
 sys_req(READ,DEFAULT_DEVICE,userInput,&countPtr);
 bufferTrack=countPtr;
+
 if(userInput[0]=='y'){
 quit=1;
 break;
 }
 else if(userInput[0]=='n'){
-comHand();
-clearInput();
+		comHand();
+		clearInput();
 }
-
-
 }
 }
 
@@ -109,60 +102,165 @@ return 0;
 
 //allows the user to set the date with a given date. Needs to not allow for dates greater then the given number of dates within a month. 
 void Setdate(){
+	cli();
+	
+	memset(date, '\0', 50);
+	countPtr=50;
+	//get input from polling
 
+		char clock[] = {"Please enter the current time in MM/DD/YY format.\n"};
+		sys_req(WRITE,DEFAULT_DEVICE,clock,&menuCountPtr);
+		
+		sys_req(READ,DEFAULT_DEVICE,date,&menuCountPtr);
+		char *token = strtok(date, "/");
+		int mon = atoi(token);
+			
+		token = strtok(NULL,"/");
+		int day = atoi(token);
 
-//polling();
+		token = strtok(NULL, "/r");
+		int yr= atoi(token);
+			int cond = 1;
+			int recursive_check = 1;
+			
+		while(cond){
+
+			if (mon < 13 && mon>0){
+				if((mon == 1 || mon == 3 || mon == 5|| mon == 7|| mon == 8|| mon == 10|| mon == 12) && day <= 31 && day >0){
+						cond = 0;
+						
+				}
+				else if ((mon ==2) && day <= 28 && day > 0){
+					cond = 0;
+					
+				}
+				
+				//Checks if its a leap year but the intel system does not have it and then it switches to the day after.
+				
+				else if (mon == 2 && yr%4 == 0 && yr != 0 && day <= 29 && day > 0){
+					cond = 0;
+				}					
+				
+				else if ((mon == 4 || mon == 6 || mon == 9|| mon == 11) && day <= 30 && day >0){
+					cond = 0;
+				}
+				
+				else{
+					sys_req(WRITE,DEFAULT_DEVICE,"Invalid input\n",&menuCountPtr);
+					Setdate();
+					recursive_check = 0;
+					cond = 0;
+					
+				}
+				
+				if(yr >=0 && yr <=99){
+				cond = 0;
+				}
+				else{
+					sys_req(WRITE,DEFAULT_DEVICE,"Invalid year\n",&menuCountPtr);
+					Setdate();
+					recursive_check = 0;
+					cond = 0;
+				}
+
+			}
+			else{
+				sys_req(WRITE,DEFAULT_DEVICE,"Invalid input\n",&menuCountPtr);
+					Setdate();
+					cond = 0;
+					recursive_check  = 0;
+			}
+		}
+					if(recursive_check == 1){
+						unsigned int monB = decToBCD(mon);
+						unsigned int dayB = decToBCD(day);
+						unsigned int yrB = decToBCD(yr);
+						outb(0x70, 0x08);
+						outb(0x71, monB);
+						outb(0x70, 0x07);
+						outb(0x71, dayB);
+						outb(0x70, 0x09);
+						outb(0x71, yrB);
+						klogv("Stored date");
+					}
+		sti();
+
 }
 //displays the date to the user that they have given. could have a set date if nothing has been added yet.
 void getDate(){
 
+	menuCountPtr=100;
+	outb(0x70, 0x07);
+	unsigned char Bday = inb(0x71);
+	int day_2 = BCDToDec(Bday);
+
+	outb(0x70, 0x08);
+	unsigned char Bmon= inb(0x71);
+	int mon = BCDToDec(Bmon);
+	
+	outb(0x70, 0x09);
+	unsigned char Byr = inb(0x71);
+	int yr = BCDToDec(Byr);
+	
+	char day_Ptr[3];
+	char mon_Ptr[3];
+	char yr_Ptr[3];
+	
+	itoa(day_2,day_Ptr);
+	itoa(mon,mon_Ptr);
+	itoa(yr,yr_Ptr);
+	
+	sys_req(WRITE,DEFAULT_DEVICE,mon_Ptr,&menuCountPtr);
+	sys_req(WRITE,DEFAULT_DEVICE,"/",&menuCountPtr);
+	sys_req(WRITE,DEFAULT_DEVICE,day_Ptr,&menuCountPtr);
+	sys_req(WRITE,DEFAULT_DEVICE,"/",&menuCountPtr);
+	sys_req(WRITE,DEFAULT_DEVICE,yr_Ptr,&menuCountPtr);
+
 }
 //allows the user to set the time that they would like their system to read. 1-12 unless military time then 1-24 should be the hours and 1-59 for minutes and seconds. 
 void setTime(){
-
-	int hrsB = 0;
-	int minB = 0;
-	int secB = 0;
-	
-	char clock[] = {"Please enter the current time in HH:MM:SS format.\n"};
-	sys_req(WRITE,DEFAULT_DEVICE,clock,&menuCountPtr);
+	menuCountPtr = 100;
 	cli();
 	
 	memset(time, '\0', 50);
 	countPtr=50;
 	//get input from polling
-	sys_req(READ,DEFAULT_DEVICE,time,&countPtr);
-	
-	
-	//takes the time from 0 and 1 for hours, takes the time from 3,4 for minutes and takes the time from 6,7 for seconds does a bit of math and figures out the corrected time. 
-	
-	 hrsB = ((time[0] * 10 + time[1]))-30;
-	 minB = (time[3] * 10 + time[4])-10;
-	 secB = (time[6] * 10 + time[7]);
-	 
-	 
-	
-	
-	 
-	 //set up some kindof check to ensure they dont insert an invalid hour, minute,or seconds... 
-	/*if(hrsB > 24  || minB>60  || secB > 60 ){
-	sys_req(WRITE,DEFAULT_DEVICE,WRONGTIME,&menuCountPtr);
-	setTime();
-	}*/
-	
+	int cond = 1;
+	while(cond){
+		char clock[] = {"Please enter the current time in HH:MM:SS format.\n"};
+		sys_req(WRITE,DEFAULT_DEVICE,clock,&menuCountPtr);
+		sys_req(READ,DEFAULT_DEVICE,time,&countPtr);
+		
+		char *token = strtok(time, ":");
+		int hr = atoi(token);
+			
+		token = strtok(NULL,":");
+		int min = atoi(token);
 
-	outb(0x70, 0x04);
-	outb(0x71, hrsB);
-	outb(0x70, 0x02);
-	outb(0x71, minB);
-	outb(0x70, 0x00);
-	outb(0x71, secB);
+		token = strtok(NULL, "/r");
+		int sec= atoi(token);
 
-	sti();
-	
+			if (hr < 24 && hr>=0 &&min <60 && min>=0 && sec<60 && sec>=0){
+				cond = 0;
+				unsigned int hrsB = decToBCD(hr);
+				unsigned int minB = decToBCD(min);
+				unsigned int secB = decToBCD(sec);
+				outb(0x70, 0x04);
+				outb(0x71, hrsB);
+				outb(0x70, 0x02);
+				outb(0x71, minB);
+				outb(0x70, 0x00);
+				outb(0x71, secB);
+		}
+		else{
+			sys_req(WRITE,DEFAULT_DEVICE,"Invalid input\n",&menuCountPtr);
+			setTime();
+			cond = 0;
+		}
+	}
+		sti();
 
 
-//polling();
 }
 //displays the set time that the user has set. If they havent added anything yet it will display a preset time. 
 
@@ -179,25 +277,19 @@ void getTime(){
 	outb(0x70, 0x00);
 	unsigned char Bsec = inb(0x71);
 	int sec = BCDToDec(Bsec);
-
-
-
-	int hr = hrs_2;
-	int mi  = min;
-	int se = sec;
 	
-	char hr_Ptr[5];
-	char min_Ptr[5];
-	char sec_Ptr[5];
+	char hr_Ptr[3];
+	char min_Ptr[3];
+	char sec_Ptr[3];
 	
-	itoa(hr,hr_Ptr);
-	itoa(mi,min_Ptr);
-	itoa(se,sec_Ptr);
-	char colon[] = {":"};
+	itoa(hrs_2,hr_Ptr);
+	itoa(min,min_Ptr);
+	itoa(sec,sec_Ptr);
+	
 	sys_req(WRITE,DEFAULT_DEVICE,hr_Ptr,&menuCountPtr);
-	sys_req(WRITE,DEFAULT_DEVICE,colon,&menuCountPtr);
+	sys_req(WRITE,DEFAULT_DEVICE,":",&menuCountPtr);
 	sys_req(WRITE,DEFAULT_DEVICE,min_Ptr,&menuCountPtr);
-	sys_req(WRITE,DEFAULT_DEVICE,colon,&menuCountPtr);
+	sys_req(WRITE,DEFAULT_DEVICE,":",&menuCountPtr);
 	sys_req(WRITE,DEFAULT_DEVICE,sec_Ptr,&menuCountPtr);
 	
 }
@@ -224,21 +316,8 @@ i=0;
 }
 
 //param - decimal number - returns BCD
+//utilized from internet: https://stackoverflow.com/questions/35370200/converting-decimal-to-bcd
 unsigned int decToBCD(int num){
-
-/*
-	if (num == 0) return 0000;
-	else if (num == 1) return 0001;
-	else if (num == 2) return 0010;
-	else if (num == 3) return 0011;
-	else if (num == 4) return 0100;
-	else if (num == 5) return 0101;
-	else if (num == 6) return 0110;
-	else if (num == 7) return 0111;
-	else if (num == 8) return 1000;
-	else return 1001;
-	*/
-	
 	
 	unsigned int ones = 0; 
 	unsigned int tens = 0; 
@@ -249,49 +328,30 @@ unsigned int decToBCD(int num){
 	return (tens + ones);
 
 
-
 }
 //param - BCD - returns decimal
 
-
+//Hayhurst code:
 int BCDToDec(unsigned char num){
-	
-	/*
-	if (num == 0000) return '0';
-	else if (num == 0001) return '1';
-	else if (num == 0010) return '2';
-	else if (num == 0011) return '3';
-	else if (num == 0100) return '4';
-	else if (num == 0101) return '5';
-	else if (num == 0110) return '6';
-	else if (num == 0111) return '7';
-	else if (num == 1000) return '8';
-	else return '9';
-	*/
-	
 
-
-    unsigned char d=  num & 0x0f;
+    unsigned char d=  num & 0x0F ;
     int c = (num >> 4);
     int dec = (c * 10) + d;
-
     return dec;
 	
-
 }
 
 void itoa(int num, char* str){
-		int i = 0;
-	//	int b = 1;
+	int i = 0;
 		
-		while(num != 0){
+	while(num != 0){
 			int a = num%10;
 			str[i++] = a + '0';
 			num = num/10;
-			}
-		str[i] = '\0';
+	}
+	str[i] = '\0';
 		
-		    int x,y;
+	int x,y;
     char temp;
 
     for( y= 0, x = i-1; y < x; y++, x--){
@@ -302,9 +362,7 @@ void itoa(int num, char* str){
 
     if(str[0] == '\0'){
         strcpy(str,"0");
-    }
-
-		
+    }	
 }
 
 
