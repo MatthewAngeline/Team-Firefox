@@ -12,8 +12,8 @@ ASFLAGS = -f elf -g
 # I'll start you off with just mpx_supt.o
 OBJFILES =\
 mpx_supt.o\
-R1/Comhandle.o
-
+R1/Comhandle.o\
+R2/processQueues.o
 
 
 .c.s:
