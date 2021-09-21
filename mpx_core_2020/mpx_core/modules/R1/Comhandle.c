@@ -37,16 +37,16 @@ countPtr=100;
 sys_req(READ,DEFAULT_DEVICE,userInput,&countPtr);
 bufferTrack=countPtr;
 //start of testing lines
-struct queue Q;
+/*
 unsigned char temp = 'a';
 struct stack stk = {temp,temp};
 
 struct pcb PCB = {"Name","Ready",2, "Ready",stk};
 
-addToQueue(Q,PCB);
+addToReadyQueue(PCB);
 
 //end of testing lines
-
+*/
 while(!quit){
 //if 0 is stored into the userInput at location 0
 if(userInput[0] == '0'){

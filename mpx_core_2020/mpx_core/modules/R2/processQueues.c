@@ -1,11 +1,12 @@
 #include "processQueues.h"
+#include <stddef.h>
 
-
-struct pcb {
+/*struct pcb {
 	char name[50];
 	char class[50];
-	//higher number = higher priority
+	//higher number = higher priority 0-9
 	int priority;
+	//Ready, blocked, running and suspended, not suspended
 	char state[50];
 	unsigned char* stack;
 	//next is towards tail of queue, prev is towards head
@@ -23,35 +24,65 @@ struct queue{
 	pcb* head;
 	pcb* tail;
 };
+*/
+queue readyQueue = {0,NULL,NULL};
+queue blockedQueue = {0,NULL,NULL};
+queue* getReadyQueue(){
+	return &readyQueue;
+}
+queue* getBlockedQueue(){
+	return &blockedQueue;
+}
+//int allocatePCB();
 
-void addToQueue(queue Q, pcb PCB){
-	Q.count++;
+//int freePCB(struct pcb PCB);
+
+//pcb* setupPCB(char name[], char pcbClass[], int priority);
+
+//pcb* findPCB(char name[]);
+
+void addToReadyQueue(pcb* PCB){
+	queue* a = getReadyQueue();
+	a->count++;
 	//means only entry
-	if(Q.head==Q.tail){
-		Q.head = PCB;
-		Q.tail = PCB;
+	if(a->count == 1){
+		a->head = PCB;
+		a->tail = PCB;
 	}
 	//low priority
-	else if(PCB.priority <= Q.tail.priority){
-		Q.tail.nextPCB = PCB;
-		PCB.prevPCB = Q.tail;
-		Q.tail = PCB;
+	else if(PCB->priority <= a->tail->priority){
+		a->tail->nextPCB = PCB;
+		PCB->prevPCB = a->tail;
+		a->tail = PCB;
 	}
 	else{
-		pcb temp = Q.tail;
-		while(PCB.priority > temp.priority){
-			if(temp.prevPCB != Q.head){
-				temp = temp.prevPCB;
+		pcb* temp = a->tail;
+		while(PCB->priority > temp->priority){
+			if(temp->prevPCB != a->head){
+				temp = temp->prevPCB;
 			}
 			//new PCB is Head
 			else{
-				PCB.nextPCB = Q.head;
-				Q.head = PCB;
+				PCB->nextPCB = a->head;
+				a->head = PCB;
 			}
 		}
 	}
 }
+void addToBlockedQueue(pcb* PCB){
+	queue* a = getBlockedQueue();
+	a->count++;
+	//only entry
+	if(a->count == 1){
+		a->head = PCB;
+		a->tail = PCB;
+	}
+	else{
+		a->tail->nextPCB = PCB;
+		PCB->prevPCB = a->tail;
+		a->tail = PCB;
+	}
+}
 
-/*void removeFromQueue(queue Q){
+//int removeFromQueue(struct pcb PCB);
 
-}*/

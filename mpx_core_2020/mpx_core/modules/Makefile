@@ -13,12 +13,11 @@ ASFLAGS = -f elf -g
 OBJFILES =\
 mpx_supt.o\
 R1/Comhandle.o\
-<<<<<<< HEAD
-R2/processQueues.o
-=======
-R1/keyboard_polling.o
+R2/processQueues.o\
+R1/keyboard_polling.o\
 
->>>>>>> 7dc23b3418694dbb49b4d77fd28394833793c00c
+
+
 
 
 .c.s:
