@@ -1,4 +1,5 @@
-
+#ifndef _COMHANDLE_H
+#define _COMHANDLE_H
 
 
 
@@ -24,3 +25,4 @@ int BCDToDec(unsigned char num);
 
 void itoa(int num, char* str);
 
+#endif

@@ -1,3 +1,6 @@
+#ifndef _PROCESSQUEUES_H
+#define _PROCESSQUEUES_H
+
 typedef struct pcb {
 	char name[50];
 	char pcbClass[50];
@@ -36,4 +39,5 @@ int removeFromQueue(pcb* PCB);
 
 
 
+#endif
 
