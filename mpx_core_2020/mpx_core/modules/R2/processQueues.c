@@ -1,31 +1,12 @@
 #include "processQueues.h"
-#include <stddef.h>
+//#include <stddef.h>
+#include "../mpx_supt.h"
+#include "../include/system.h"
+#include "../../include/string.h"
+#include <../include/core/io.h>
 
+int queueCountPtr=80;
 
-/*struct pcb {
-	char name[50];
-	char class[50];
-	//higher number = higher priority 0-9
-	int priority;
-	//Ready, blocked, running and suspended, not suspended
-	char state[50];
-	unsigned char* stack;
-	//next is towards tail of queue, prev is towards head
-	pcb* nextPCB;
-	pcb* prevPCB;
-};
-
-struct stack{
-	unsigned char* head;
-	unsigned char* base;
-	
-};
-struct queue{
-	int count;
-	pcb* head;
-	pcb* tail;
-};
-*/
 queue readyQueue = {0,NULL,NULL};
 queue blockedQueue = {0,NULL,NULL};
 queue* getReadyQueue(){
@@ -34,11 +15,53 @@ queue* getReadyQueue(){
 queue* getBlockedQueue(){
 	return &blockedQueue;
 }
-//int allocatePCB();
+pcb* allocatePCB(){
+	//int size = 1024;
+	pcb *temp = sys_alloc_mem(sizeof(pcb));
+	return temp;
+}
 
-//int freePCB(struct pcb PCB);
+int freePCB(pcb* PCB){
+	
+	if(sys_free_mem(PCB) ==-1){
+		return 0;
+	}
+	return 1;
 
-//pcb* setupPCB(char name[], char pcbClass[], int priority);
+}
+
+pcb* setupPCB(char name[], int pcbClass, int priority){
+	pcb* p = allocatePCB();
+	if(findPCB(name) == NULL && strlen(name)>=8 ){
+		strcpy(p->name,name);
+
+		}
+	else{
+		sys_req(WRITE,DEFAULT_DEVICE,"Invalid input1\n",&queueCountPtr);
+		return NULL;
+
+}
+	if(pcbClass == 0 || pcbClass == 1){
+	p->pcbClass = pcbClass;
+	}
+	else{
+		sys_req(WRITE,DEFAULT_DEVICE,"Invalid input2\n",&queueCountPtr);
+		return NULL;
+	}
+	if(priority>=0 && priority <10){
+	p->priority = priority;
+	}
+	else{
+		sys_req(WRITE,DEFAULT_DEVICE,"Invalid input3\n",&queueCountPtr);
+		return NULL;
+	}
+	strcpy(p->state,"ready");
+	
+	strcpy(p->status,"not suspended");
+	
+	return p;
+	
+}
 
 pcb* findPCB(char name[]){
 	queue* q = getReadyQueue();
@@ -46,13 +69,15 @@ pcb* findPCB(char name[]){
 	if(q->head != NULL){
 		locator = q->head;
 		//is the same
-		if(locator->name==name){
+		if(strcmp(locator->name,name)==0){
 			return locator;
+			sys_req(WRITE,DEFAULT_DEVICE,"return1\n",&queueCountPtr);
 		}
 		while(locator->nextPCB != NULL){
 			locator = locator->nextPCB;
-			if(locator->name==name){
+			if(strcmp(locator->name,name)==0){
 				return locator;
+				sys_req(WRITE,DEFAULT_DEVICE,"return2\n",&queueCountPtr);
 			}
 		}
 		
@@ -63,15 +88,18 @@ pcb* findPCB(char name[]){
 		//is the same
 		if(locator->name==name){
 			return locator;
+			sys_req(WRITE,DEFAULT_DEVICE,"return3\n",&queueCountPtr);
 		}
 		while(locator->nextPCB != NULL){
 			locator = locator->nextPCB;
 			if(locator->name==name){
 				return locator;
+				sys_req(WRITE,DEFAULT_DEVICE,"return4\n",&queueCountPtr);
 			}
 		}
 		
 	}
+	sys_req(WRITE,DEFAULT_DEVICE,"Invalid input5\n",&queueCountPtr);
 	return NULL;
 }
 
@@ -90,15 +118,31 @@ void addToReadyQueue(pcb* PCB){
 		q->tail = PCB;
 	}
 	else{
+		int cond =1;
 		pcb* temp = q->tail;
-		while(PCB->priority > temp->priority){
-			if(temp->prevPCB != q->head){
+		while(cond){
+		//sys_req(WRITE,DEFAULT_DEVICE,"loop\n",&queueCountPtr);
+			if(PCB->priority <= temp->priority){	
+				PCB->nextPCB = temp->nextPCB;
+				PCB->prevPCB = temp;
+				temp->nextPCB->prevPCB = PCB;
+				temp->nextPCB = PCB;
+				cond = 0;
+				//break;
+				}
+			else if(temp->prevPCB != NULL){
 				temp = temp->prevPCB;
+				sys_req(WRITE,DEFAULT_DEVICE,"loop\n",&queueCountPtr);
+				
 			}
 			//new PCB is Head
 			else{
-				PCB->nextPCB = q->head;
+				temp->prevPCB = PCB;
+				PCB->nextPCB = temp;
 				q->head = PCB;
+				cond = 0;
+				//break;
+				
 			}
 		}
 	}
@@ -120,16 +164,14 @@ void addToBlockedQueue(pcb* PCB){
 
 //returns 0 on error, 1 on success
 int removeFromQueue(pcb* PCB){
-	char readyNotSuspend[] = "ReadyNotSuspended";
-	char readySuspend[] = "ReadySuspended";
-	char blockedNotSuspend[] = "BlockedNotSuspended";
-	char blockedSuspend[] = "BlockedSuspended";
+	char ready[] = "Ready";
+	char blocked[] = "Blocked";
 	queue* q;
 	pcb* locator;
-	if(PCB->state == readyNotSuspend || PCB->state == readySuspend){
+	if(PCB->state == ready){
 		q = getReadyQueue();
 	}
-	else if (PCB->state == blockedNotSuspend || PCB->state == blockedSuspend){
+	else if (PCB->state == blocked){
 		q = getBlockedQueue();
 	}
 	if(q->head != NULL)locator = q->head;

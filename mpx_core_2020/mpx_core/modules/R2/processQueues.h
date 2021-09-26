@@ -1,12 +1,14 @@
 #ifndef _PROCESSQUEUES_H
 #define _PROCESSQUEUES_H
 
+
 typedef struct pcb {
 	char name[50];
-	char pcbClass[50];
+	int pcbClass;
 	//higher number = higher priority
 	int priority;
 	char state[50];
+	char status[50];
 	unsigned char stack[1024];
 	unsigned char* stackBase;
 	unsigned char* stackHead;
@@ -23,13 +25,14 @@ typedef struct queue{
 }queue;
 
 queue* getReadyQueue();
-int allocatePCB();
+queue* getBlockedQueue();
+pcb* allocatePCB();
 
 int freePCB(pcb* PCB);
 
-struct pcb* setupPCB(char name[], char pcbClass[], int priority);
+pcb* setupPCB(char name[], int pcbClass, int priority);
 
-struct pcb* findPCB(char name[]);
+pcb* findPCB(char name[]);
 
 void addToReadyQueue(pcb* PCB);
 
@@ -37,7 +40,8 @@ void addToBlockedQueue(pcb* PCB);
 
 int removeFromQueue(pcb* PCB);
 
-
-
 #endif
+
+
+
 

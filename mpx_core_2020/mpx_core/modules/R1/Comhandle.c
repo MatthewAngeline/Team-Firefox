@@ -4,6 +4,7 @@
 #include "../../include/string.h"
 #include <../include/core/io.h>
 #include "../R2/processQueues.h"
+#include "../R2/userCommands.h"
 
 
 int countPtr;
@@ -24,6 +25,12 @@ char HELP[]={};
 
 //main file to run all the applications and used to create the menu driven logic.
 int comHand(){
+createPCB("testtesttest2",1,7);
+createPCB("testtesttest3",1,1);
+Suspend("testtesttest2");
+showReady();
+setPriority("testtesttest2",4);
+showReady();
 
 
 menuCountPtr=80;

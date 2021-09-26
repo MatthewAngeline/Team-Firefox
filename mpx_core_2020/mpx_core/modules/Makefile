@@ -15,7 +15,7 @@ mpx_supt.o\
 R1/Comhandle.o\
 R2/processQueues.o\
 R1/keyboard_polling.o\
-
+R2/userCommands.o\
 
 
 
