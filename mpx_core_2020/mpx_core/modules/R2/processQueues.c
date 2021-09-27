@@ -55,6 +55,8 @@ pcb* setupPCB(char name[], int pcbClass, int priority){
 		sys_req(WRITE,DEFAULT_DEVICE,"Invalid input3\n",&queueCountPtr);
 		return NULL;
 	}
+	p->nextPCB=NULL;
+	p->prevPCB=NULL;
 	strcpy(p->state,"Ready");
 	
 	strcpy(p->status,"Not Suspended");
@@ -71,35 +73,29 @@ pcb* findPCB(char name[]){
 		//is the same
 		if(strcmp(locator->name,name)==0){
 			return locator;
-			sys_req(WRITE,DEFAULT_DEVICE,"return1\n",&queueCountPtr);
 		}
 		while(locator->nextPCB != NULL){
 			locator = locator->nextPCB;
 			if(strcmp(locator->name,name)==0){
 				return locator;
-				sys_req(WRITE,DEFAULT_DEVICE,"return2\n",&queueCountPtr);
 			}
 		}
 		
 	}
 	q = getBlockedQueue();
-	if(q->head != NULL){ //if q is not empty
+	if(q->head != NULL){
 		locator = q->head;
-		//is the same (works as a do while)
 		if(strcmp(locator->name,name)==0){
-			//sys_req(WRITE,DEFAULT_DEVICE,"return3\n",&queueCountPtr);
 			return locator;
 		}
-		while(locator->nextPCB != NULL){ //while not at tail
+		while(locator->nextPCB != NULL){ 
 			locator = locator->nextPCB;
 			if(strcmp(locator->name,name)==0){
-				//sys_req(WRITE,DEFAULT_DEVICE,"return4\n",&queueCountPtr);
 				return locator;
 			}
 		}
 		
 	}
-	sys_req(WRITE,DEFAULT_DEVICE,"Invalid input5\n",&queueCountPtr);
 	return NULL;
 }
 
@@ -121,7 +117,6 @@ void addToReadyQueue(pcb* PCB){
 		int cond =1;
 		pcb* temp = q->tail;
 		while(cond){
-		//sys_req(WRITE,DEFAULT_DEVICE,"loop\n",&queueCountPtr);
 			if(PCB->priority <= temp->priority){	
 				PCB->nextPCB = temp->nextPCB;
 				PCB->prevPCB = temp;
@@ -132,7 +127,6 @@ void addToReadyQueue(pcb* PCB){
 				}
 			else if(temp->prevPCB != NULL){
 				temp = temp->prevPCB;
-				sys_req(WRITE,DEFAULT_DEVICE,"loop\n",&queueCountPtr);
 				
 			}
 			//new PCB is Head
@@ -169,11 +163,9 @@ int removeFromQueue(pcb* PCB){
 	queue* q;
 	pcb* locator;
 	if(strcmp(PCB->state,"Ready")==0){
-	//sys_req(WRITE,DEFAULT_DEVICE,"getting ready\n",&queueCountPtr);
 		q = getReadyQueue();
 	}
 	else if (strcmp(PCB->state,"Blocked")==0){
-	//sys_req(WRITE,DEFAULT_DEVICE,"getting blocked\n",&queueCountPtr);
 		q = getBlockedQueue();
 	}
 	if(q->head != NULL)locator = q->head;

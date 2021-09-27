@@ -15,7 +15,7 @@ int bufferTrack=0;
 char userInput[100];
 char time[10];
 char date[10];
-char MENU[]={"\nFirefox MPX\n0: help \n1: Set Date \n2: Set Time \n3: Display Date \n4: Display Time\n5: Version\n6: Shut Down \nPlease enter your choice, one option at a time, entering only the number corresponding with the option:\n"};
+char MENU[]={"\nFirefox MPX\n0: help \n1: Set Date \n2: Set Time \n3: Display Date \n4: Display Time\n5: Version\n6: Shut Down \n7: Suspend \n8: Resume \n9: Set Priority \n10: Show PCB \n11: Show All \n12: Show Ready\n13: Show Block \n14: Create PCB \n15: Delete PCB \n16: Block \n17: Unblock \nPlease enter your choice, one option at a time, entering only the number corresponding with the option:\n"};
 char WRONGFORMAT[]={"Please insert the correct format\n"};
 char CONFIRMATION[]={"Enter y + enter to shutdown press n + enter to go back to menu:\n"}; 
 char VERSION[]={"1.1 \nCompletion Date:9/09/21\n"};
@@ -25,39 +25,6 @@ char HELP[]={};
 
 //main file to run all the applications and used to create the menu driven logic.
 int comHand(){
-
-//create and test suspend
-createPCB("Testnum1",1,1);
-createPCB("Testnum2",1,7);
-Suspend("Testnum1");
-showReady();
-
-//test block
-sys_req(WRITE,DEFAULT_DEVICE,"__________________\n",&menuCountPtr);
-block("Testnum2");
-sys_req(WRITE,DEFAULT_DEVICE,"Ready queue:\n",&menuCountPtr);
-showReady();
-sys_req(WRITE,DEFAULT_DEVICE,"\n\nBlocked queue:\n",&menuCountPtr);
-showBlocked();
-
-//test set priority and resume
-Resume("Testnum1");
-setPriority("Testnum1", 5);
-setPriority("Testnum2", 4);
-sys_req(WRITE,DEFAULT_DEVICE,"__________________\n",&menuCountPtr);
-sys_req(WRITE,DEFAULT_DEVICE,"Ready queue:\n",&menuCountPtr);
-showReady();
-sys_req(WRITE,DEFAULT_DEVICE,"\n\nBlocked queue:\n",&menuCountPtr);
-showBlocked();
-
-//test unblock
-unblock("Testnum2");
-sys_req(WRITE,DEFAULT_DEVICE,"__________________\n",&menuCountPtr);
-sys_req(WRITE,DEFAULT_DEVICE,"Ready queue:\n",&menuCountPtr);
-showReady();
-sys_req(WRITE,DEFAULT_DEVICE,"\n\nBlocked queue:\n",&menuCountPtr);
-showBlocked();
-
 
 menuCountPtr=80;
 
@@ -89,9 +56,85 @@ comHand();
 }
 //if 1 is stored into the userInput at location 0
 if(userInput[0]=='1'){
-Setdate();
-clearInput();
-comHand();
+	//Show PCB
+	if(userInput[1]=='0'){
+	sys_req(WRITE,DEFAULT_DEVICE,"Enter process name\n",&menuCountPtr);
+	clearInput();
+	sys_req(READ,DEFAULT_DEVICE,userInput,&countPtr);
+	showPCB(userInput);
+	clearInput();
+	comHand();
+	}
+	//Show All
+	else if(userInput[1]=='1'){
+	showAll();
+	clearInput();
+	comHand();
+	}
+	//Show Ready
+	else if(userInput[1]=='2'){
+	showReady();
+	clearInput();
+	comHand();
+	}
+	//Show Blocked
+	else if(userInput[1]=='3'){
+	showBlocked();
+	clearInput();
+	comHand();
+	}
+	//Create PCB
+	else if(userInput[1]=='4'){
+	sys_req(WRITE,DEFAULT_DEVICE,"Enter process name, a class number (0 or 1), and a priority number (name,#,#)\n",&menuCountPtr);
+	clearInput();
+	sys_req(READ,DEFAULT_DEVICE,userInput,&countPtr);
+	char* token = strtok(userInput, ",");
+	int count = 0;
+	char* input[3];
+	while(count<3) {
+	input[count]=token;
+	token = strtok(NULL, ",");
+	count++;
+	}
+	int class = atoi(input[1]);
+	int priority = atoi(input[2]);
+
+	createPCB(input[0],class,priority);
+	clearInput();
+	comHand();
+	}
+	//Delete PCB
+	else if(userInput[1]=='5'){
+	sys_req(WRITE,DEFAULT_DEVICE,"Enter process name\n",&menuCountPtr);
+	clearInput();
+	sys_req(READ,DEFAULT_DEVICE,userInput,&countPtr);
+	deletePCB(userInput);
+	clearInput();
+	comHand();
+	}
+	//Block
+	else if(userInput[1]=='6'){
+	sys_req(WRITE,DEFAULT_DEVICE,"Enter process name\n",&menuCountPtr);
+	clearInput();
+	sys_req(READ,DEFAULT_DEVICE,userInput,&countPtr);
+	block(userInput);
+	clearInput();
+	comHand();
+	}
+	//Unblock
+	else if(userInput[1]=='7'){
+	sys_req(WRITE,DEFAULT_DEVICE,"Enter process name\n",&menuCountPtr);
+	clearInput();
+	sys_req(READ,DEFAULT_DEVICE,userInput,&countPtr);
+	unblock(userInput);
+	clearInput();
+	comHand();
+	}
+	else{
+	Setdate();
+	clearInput();
+	comHand();
+	}
 }
 //if 2 is  is stored into the userInput at location 0
 if(userInput[0]=='2'){
@@ -138,8 +181,47 @@ else if(userInput[0]=='n'){
 		clearInput();
 }
 }
+//Suspend
+if(userInput[0]=='7'){
+sys_req(WRITE,DEFAULT_DEVICE,"Enter process name\n",&menuCountPtr);
+clearInput();
+sys_req(READ,DEFAULT_DEVICE,userInput,&countPtr);
+Suspend(userInput);
+clearInput();
+comHand();
+}
+//Resume
+if(userInput[0]=='8'){
+sys_req(WRITE,DEFAULT_DEVICE,"Enter process name\n",&menuCountPtr);
+clearInput();
+sys_req(READ,DEFAULT_DEVICE,userInput,&countPtr);
+Resume(userInput);
+clearInput();
+comHand();
+}
+//Set Priority
+if(userInput[0]=='9'){
+sys_req(WRITE,DEFAULT_DEVICE,"Enter process name and new priority number (name,#)\n",&menuCountPtr);
+clearInput();
+sys_req(READ,DEFAULT_DEVICE,userInput,&countPtr);
+char* token = strtok(userInput, ",");
+
+int count = 0;
+char* input[2];
+while(count<2) {
+input[count]=token;
+token = strtok(NULL, ",");
+count++;
+}
+int priority = atoi(input[1]);
+
+setPriority(input[0],priority);
+clearInput();
+comHand();
+
 }
 
+}
 return 0;
 }
 
@@ -361,7 +443,7 @@ comHand();
 //displays hard coded information about each of the modules that have been added that the user can use. 
 void Help(){
 	//displays this message to terminal
-char HELP[] = {"Option 1: Set Date. \n\t Allows the user to set the Date should the listed date be incorrect.\nOption 2: Set Time. \n\t Allows the user to set the Time should the listed date be incorrect.\nOption 3: Display Date. \n\t Prints the date that is set to the screen.\nOption 4: Display Time. \n\t Prints the time that is set to the screen.\nOption 5: Version. \n\t Prints the currect Version of the project to the screen.\nOption 6: Shut Down. \n\t Begins the shutdown protocol for the system.\n"};
+char HELP[] = {"Option 1: Set Date. \n\t Allows the user to set the Date should the listed date be incorrect.\nOption 2: Set Time. \n\t Allows the user to set the Time should the listed date be incorrect.\nOption 3: Display Date. \n\t Prints the date that is set to the screen.\nOption 4: Display Time. \n\t Prints the time that is set to the screen.\nOption 5: Version. \n\t Prints the currect Version of the project to the screen.\nOption 6: Shut Down. \n\t Begins the shutdown protocol for the system.\nOption 7: Suspend \n\t Sets a user given process to Suspended \nOption 8: Resume \n\t Sets a user given process to Not Suspended \nOption 9: Set Priority\n\t Changes priority of a user given process \nOption 10: Show PCB \n\t Shows the PCB of a user given process \nOption 11: Show All \n\t Shows all PCBs \nOption 12: Show Ready \n\t Shows all PCBs within the ready queue \nOption 13: Show Blocked \n\t Shows all PCBs within the blocked queue \nOption 14: Create PCB \n\t Creates a PCB when the user gives the PCB name, the class, and the priority \nOption 15: Delete PCB \n\t Deletes a user given PCB \nOption 16: Block \n\t Changes a user given process state to blocked and moves PCB to blocked queue \nOption 17: Unblock \n\t Changes a user given process state to ready and moves PCB to ready queue"};
 sys_req(WRITE,DEFAULT_DEVICE,HELP,&menuCountPtr);
 }
 
