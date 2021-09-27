@@ -9,6 +9,7 @@
 char WRONGNAME[]= "Invalid Name, Reselect the option to try again \n";
 int nameCountPtr=99;
 int userCountPtr = 100;
+
 void Suspend(char name[]){
 	pcb* temp = findPCB(name);
 
@@ -108,26 +109,20 @@ queue* temp = getBlockedQueue();
 pcb* PCB = temp->head;
 	while(PCB !=NULL){
 	   showPCB(PCB->name);
-	   PCB = PCB -> nextPCB;
+	   PCB = PCB->nextPCB;
 
 }
-
 }
+
 void showAll(){
-
-showReady();
-showBlocked();
-
-
-
+	showReady();
+	showBlocked();
 }
 
 //----------------Temp Methods------------------
 void createPCB(char name[], int pcbClass,int priority){
-
-pcb* temp = setupPCB(name,pcbClass,priority);
-addToReadyQueue(temp);
-
+	pcb* temp = setupPCB(name,pcbClass,priority);
+	addToReadyQueue(temp);
 }
 
 void deletePCB(char name[]){
@@ -144,21 +139,16 @@ pcb* temp = findPCB(name);
 }
 
 void block(char name[]){
-pcb* temp = findPCB(name);
+	pcb* temp = findPCB(name);
 	if(temp == NULL){
-
 		sys_req(WRITE,DEFAULT_DEVICE,WRONGNAME,&nameCountPtr);
 	}
 	else{
-
 		removeFromQueue(temp);
 		strcpy(temp->state,"Blocked");
 		temp->nextPCB = NULL;
 		temp->prevPCB = NULL;
 		addToBlockedQueue(temp);
-
-
-
 	}
 }
 

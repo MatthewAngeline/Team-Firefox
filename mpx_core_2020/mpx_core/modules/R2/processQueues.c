@@ -55,9 +55,9 @@ pcb* setupPCB(char name[], int pcbClass, int priority){
 		sys_req(WRITE,DEFAULT_DEVICE,"Invalid input3\n",&queueCountPtr);
 		return NULL;
 	}
-	strcpy(p->state,"ready");
+	strcpy(p->state,"Ready");
 	
-	strcpy(p->status,"not suspended");
+	strcpy(p->status,"Not Suspended");
 	
 	return p;
 	
@@ -83,18 +83,18 @@ pcb* findPCB(char name[]){
 		
 	}
 	q = getBlockedQueue();
-	if(q->head != NULL){
+	if(q->head != NULL){ //if q is not empty
 		locator = q->head;
-		//is the same
-		if(locator->name==name){
+		//is the same (works as a do while)
+		if(strcmp(locator->name,name)==0){
+			//sys_req(WRITE,DEFAULT_DEVICE,"return3\n",&queueCountPtr);
 			return locator;
-			sys_req(WRITE,DEFAULT_DEVICE,"return3\n",&queueCountPtr);
 		}
-		while(locator->nextPCB != NULL){
+		while(locator->nextPCB != NULL){ //while not at tail
 			locator = locator->nextPCB;
-			if(locator->name==name){
+			if(strcmp(locator->name,name)==0){
+				//sys_req(WRITE,DEFAULT_DEVICE,"return4\n",&queueCountPtr);
 				return locator;
-				sys_req(WRITE,DEFAULT_DEVICE,"return4\n",&queueCountPtr);
 			}
 		}
 		
@@ -146,6 +146,7 @@ void addToReadyQueue(pcb* PCB){
 			}
 		}
 	}
+	strcpy(PCB->state,"Ready");
 }
 void addToBlockedQueue(pcb* PCB){
 	queue* q = getBlockedQueue();
@@ -160,18 +161,19 @@ void addToBlockedQueue(pcb* PCB){
 		PCB->prevPCB = q->tail;
 		q->tail = PCB;
 	}
+	strcpy(PCB->state,"Blocked");
 }
 
 //returns 0 on error, 1 on success
 int removeFromQueue(pcb* PCB){
-	char ready[] = "Ready";
-	char blocked[] = "Blocked";
 	queue* q;
 	pcb* locator;
-	if(PCB->state == ready){
+	if(strcmp(PCB->state,"Ready")==0){
+	//sys_req(WRITE,DEFAULT_DEVICE,"getting ready\n",&queueCountPtr);
 		q = getReadyQueue();
 	}
-	else if (PCB->state == blocked){
+	else if (strcmp(PCB->state,"Blocked")==0){
+	//sys_req(WRITE,DEFAULT_DEVICE,"getting blocked\n",&queueCountPtr);
 		q = getBlockedQueue();
 	}
 	if(q->head != NULL)locator = q->head;
@@ -183,17 +185,20 @@ int removeFromQueue(pcb* PCB){
 			if(locator == q->head){
 				locator->nextPCB->prevPCB = NULL;
 				q->head = locator->nextPCB;
+				locator->nextPCB = NULL;
 				
 			}
 			else if (locator == q->tail){
 				locator->prevPCB->nextPCB = NULL;
 				q->tail = locator->prevPCB;
-				
+				locator->prevPCB = NULL;
 			}
 			
 			else{
 				locator->prevPCB->nextPCB = locator->nextPCB;
 				locator->nextPCB->prevPCB = locator->prevPCB;
+				locator->nextPCB = NULL;
+				locator->prevPCB = NULL;
 			}
 			q->count--;
 			return 1;

@@ -25,12 +25,38 @@ char HELP[]={};
 
 //main file to run all the applications and used to create the menu driven logic.
 int comHand(){
-createPCB("testtesttest2",1,7);
-createPCB("testtesttest3",1,1);
-Suspend("testtesttest2");
+
+//create and test suspend
+createPCB("Testnum1",1,1);
+createPCB("Testnum2",1,7);
+Suspend("Testnum1");
 showReady();
-setPriority("testtesttest2",4);
+
+//test block
+sys_req(WRITE,DEFAULT_DEVICE,"__________________\n",&menuCountPtr);
+block("Testnum2");
+sys_req(WRITE,DEFAULT_DEVICE,"Ready queue:\n",&menuCountPtr);
 showReady();
+sys_req(WRITE,DEFAULT_DEVICE,"\n\nBlocked queue:\n",&menuCountPtr);
+showBlocked();
+
+//test set priority and resume
+Resume("Testnum1");
+setPriority("Testnum1", 5);
+setPriority("Testnum2", 4);
+sys_req(WRITE,DEFAULT_DEVICE,"__________________\n",&menuCountPtr);
+sys_req(WRITE,DEFAULT_DEVICE,"Ready queue:\n",&menuCountPtr);
+showReady();
+sys_req(WRITE,DEFAULT_DEVICE,"\n\nBlocked queue:\n",&menuCountPtr);
+showBlocked();
+
+//test unblock
+unblock("Testnum2");
+sys_req(WRITE,DEFAULT_DEVICE,"__________________\n",&menuCountPtr);
+sys_req(WRITE,DEFAULT_DEVICE,"Ready queue:\n",&menuCountPtr);
+showReady();
+sys_req(WRITE,DEFAULT_DEVICE,"\n\nBlocked queue:\n",&menuCountPtr);
+showBlocked();
 
 
 menuCountPtr=80;
