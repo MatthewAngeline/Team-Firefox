@@ -1,5 +1,4 @@
 #include "processQueues.h"
-//#include <stddef.h>
 #include "../mpx_supt.h"
 #include "../include/system.h"
 #include "../../include/string.h"
@@ -19,12 +18,15 @@ queue* getReadyQueue(){
 queue* getBlockedQueue(){
 	return &blockedQueue;
 }
+
+// allocates memory for the new PCB
 pcb* allocatePCB(){
 	//int size = 1024;
 	pcb *temp = sys_alloc_mem(sizeof(pcb));
 	return temp;
 }
 
+// free memory given to the associated PCB
 int freePCB(pcb* PCB){
 	
 	if(sys_free_mem(PCB) ==-1){
@@ -34,6 +36,7 @@ int freePCB(pcb* PCB){
 
 }
 
+// Creates an empty PCB and allocates its name, class and priority.
 pcb* setupPCB(char name[], int pcbClass, int priority){
 	pcb* p = allocatePCB();
 	if(findPCB(name) == NULL && strlen(name)>=8 ){
@@ -69,6 +72,7 @@ pcb* setupPCB(char name[], int pcbClass, int priority){
 	
 }
 
+// Searches both the queues for a given PCB and returns the PCB if it finds it
 pcb* findPCB(char name[]){
 	queue* q = getReadyQueue();
 	pcb* locator;
