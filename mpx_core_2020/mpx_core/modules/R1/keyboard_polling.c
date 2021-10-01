@@ -53,18 +53,19 @@ int * keyboard_polling(char *buffer, int *count){
 				inputCount=inputCount-1;
 				
 				//reprints
-				serial_print("\033[0K\b \b");
-				
-				i = bufferCount;
-				while(i<inputCount){
-					serial_print(&buffer[i]);
-					i++;
+				serial_print("\033[2K");
+				i=bufferCount;
+				while(i>-1){
+				serial_print("\b");
+				i--;
 				}
-				
+				serial_print(buffer);
+				i=inputCount;
 				while(i>bufferCount) {
 					serial_print("\b");
 					i--;
 				}
+		
 
 			}
 		}
@@ -92,12 +93,9 @@ int * keyboard_polling(char *buffer, int *count){
 				serial_print("\033[D");
 				}
 			}
-}
-	        //ascii for left arrow is 75
-		else if(letter==75){
-		bufferCount=bufferCount-2;
-		serial_print("\b");
 		}
+	        //ascii for left arrow is 75
+	
 
 		//delete ascii is 0x7f
 		else if(letter==0x7e){
@@ -141,18 +139,16 @@ int * keyboard_polling(char *buffer, int *count){
 			
 			//serial_print("del");
 		}
-
-		//regular characters
-		else{
-		buffer[bufferCount] = letter;
-		//buffer fills and breaks out - should be 100 using for tests
-		if(bufferCount==20){
+		
+//buffer fills and breaks out - should be 100 using for tests
+		else if(bufferCount==100){
 		serial_print("\n");
 		break;
 		}
 		
-			
-
+		//regular characters
+		else{
+		buffer[bufferCount] = letter;
 
 		serial_print(&buffer[bufferCount]);
 		bufferCount=bufferCount+1;
