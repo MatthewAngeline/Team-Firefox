@@ -71,19 +71,32 @@ void showPCB(char processName[]){
 		char print[100];
 		strPtr = print;
 		strcpy(print, temp->name);
+		sys_req(WRITE,DEFAULT_DEVICE,"Name:",&userCountPtr);
 		sys_req(WRITE,DEFAULT_DEVICE,print,&userCountPtr);
 		sys_req(WRITE,DEFAULT_DEVICE,"\n",&userCountPtr);
-		itoa(temp->pcbClass, strPtr);
+		sys_req(WRITE,DEFAULT_DEVICE,"Class:",&userCountPtr);
+		if(temp->pcbClass==0){
+		strcpy(print,"Application");
+		
+		}
+		else if(temp->pcbClass==1){
+		strcpy(print,"System");
+		
+		}
+		
 		strcpy(print, strPtr);
 		sys_req(WRITE,DEFAULT_DEVICE,print,&userCountPtr);
 		sys_req(WRITE,DEFAULT_DEVICE,"\n",&userCountPtr);
+		sys_req(WRITE,DEFAULT_DEVICE,"Priority:",&userCountPtr);
 		itoa(temp->priority, strPtr);
 		strcpy(print, strPtr);
 		sys_req(WRITE,DEFAULT_DEVICE,print,&userCountPtr);
 		sys_req(WRITE,DEFAULT_DEVICE,"\n",&userCountPtr);
+		sys_req(WRITE,DEFAULT_DEVICE,"State:",&userCountPtr);
 		strcpy(print, temp->state);
 		sys_req(WRITE,DEFAULT_DEVICE,print,&userCountPtr);
 		sys_req(WRITE,DEFAULT_DEVICE,"\n",&userCountPtr);
+		sys_req(WRITE,DEFAULT_DEVICE,"status:",&userCountPtr);
 		strcpy(print, temp->status);
 		
 		sys_req(WRITE,DEFAULT_DEVICE,print,&userCountPtr);
@@ -95,7 +108,7 @@ void showPCB(char processName[]){
 	}
 	
 void showReady(){
-
+	sys_req(WRITE,DEFAULT_DEVICE,"\nReady Queue: \n",&userCountPtr);
 	queue* temp = getReadyQueue();
 	pcb* PCB = temp->head;
 	   while (PCB != NULL){
@@ -105,6 +118,7 @@ void showReady(){
 }
 }
 void showBlocked(){
+	sys_req(WRITE,DEFAULT_DEVICE,"\nBlocked Queue: \n",&userCountPtr);
 queue* temp = getBlockedQueue();
 pcb* PCB = temp->head;
 	while(PCB !=NULL){
