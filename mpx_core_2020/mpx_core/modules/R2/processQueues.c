@@ -39,33 +39,12 @@ int freePCB(pcb* PCB){
 // Creates an empty PCB and allocates its name, class and priority.
 pcb* setupPCB(char name[], int pcbClass, int priority){
 	pcb* p = allocatePCB();
-	if(findPCB(name) == NULL && strlen(name)>=8 ){
-		strcpy(p->name,name);
-
-		}
-	else{
-		sys_req(WRITE,DEFAULT_DEVICE,"Invalid input1\n",&queueCountPtr);
-		return NULL;
-
-}
-	if(pcbClass == 0 || pcbClass == 1){
+	strcpy(p->name,name);
 	p->pcbClass = pcbClass;
-	}
-	else{
-		sys_req(WRITE,DEFAULT_DEVICE,"Invalid input2\n",&queueCountPtr);
-		return NULL;
-	}
-	if(priority>=0 && priority <10){
 	p->priority = priority;
-	}
-	else{
-		sys_req(WRITE,DEFAULT_DEVICE,"Invalid input3\n",&queueCountPtr);
-		return NULL;
-	}
 	p->nextPCB=NULL;
 	p->prevPCB=NULL;
 	strcpy(p->state,"Ready");
-	
 	strcpy(p->status,"Not Suspended");
 	
 	return p;
@@ -118,7 +97,7 @@ void addToReadyQueue(pcb* PCB){
 	queue* q = getReadyQueue();
 	q->count++;
 	//means only entry
-	if(q->count == 1){
+	if(q->head == NULL){
 		q->head = PCB;
 		q->tail = PCB;
 	}

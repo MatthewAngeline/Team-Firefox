@@ -77,7 +77,8 @@ void showPCB(char processName[]){
 		sys_req(WRITE,DEFAULT_DEVICE,"Name:",&userCountPtr);
 		sys_req(WRITE,DEFAULT_DEVICE,print,&userCountPtr);
 		sys_req(WRITE,DEFAULT_DEVICE,"\n",&userCountPtr);
-<<<<<<< HEAD
+		
+		//copies the class of the pcb and prints it to the screen
 		sys_req(WRITE,DEFAULT_DEVICE,"Class:",&userCountPtr);
 		if(temp->pcbClass==0){
 		strcpy(print,"Application");
@@ -91,36 +92,24 @@ void showPCB(char processName[]){
 		strcpy(print, strPtr);
 		sys_req(WRITE,DEFAULT_DEVICE,print,&userCountPtr);
 		sys_req(WRITE,DEFAULT_DEVICE,"\n",&userCountPtr);
+		
 		sys_req(WRITE,DEFAULT_DEVICE,"Priority:",&userCountPtr);
-=======
-		//copies the class of the pcb and prints it to the screen
-		itoa(temp->pcbClass, strPtr);
-		strcpy(print, strPtr);
-		sys_req(WRITE,DEFAULT_DEVICE,print,&userCountPtr);
-		sys_req(WRITE,DEFAULT_DEVICE,"\n",&userCountPtr);
 		//changes the priority to a character and prints it to the screen
->>>>>>> 7b1af4e1ed3f38ff20e6c56a6d3e3b968302049e
 		itoa(temp->priority, strPtr);
 		strcpy(print, strPtr);
 		sys_req(WRITE,DEFAULT_DEVICE,print,&userCountPtr);
 		sys_req(WRITE,DEFAULT_DEVICE,"\n",&userCountPtr);
-<<<<<<< HEAD
+		//copies the state of the pcb and prints it to the screen
 		sys_req(WRITE,DEFAULT_DEVICE,"State:",&userCountPtr);
 		strcpy(print, temp->state);
 		sys_req(WRITE,DEFAULT_DEVICE,print,&userCountPtr);
 		sys_req(WRITE,DEFAULT_DEVICE,"\n",&userCountPtr);
 		sys_req(WRITE,DEFAULT_DEVICE,"status:",&userCountPtr);
-=======
-		//copies the state of the pcb and prints it to the screen
-		strcpy(print, temp->state);
-		sys_req(WRITE,DEFAULT_DEVICE,print,&userCountPtr);
-		sys_req(WRITE,DEFAULT_DEVICE,"\n",&userCountPtr);
 		//copies the status of the pcb and prints it to the screen
->>>>>>> 7b1af4e1ed3f38ff20e6c56a6d3e3b968302049e
 		strcpy(print, temp->status);
 		
 		sys_req(WRITE,DEFAULT_DEVICE,print,&userCountPtr);
-		sys_req(WRITE,DEFAULT_DEVICE,"\n",&userCountPtr);
+		sys_req(WRITE,DEFAULT_DEVICE,"\n\n",&userCountPtr);
 		
 		
 
@@ -128,11 +117,8 @@ void showPCB(char processName[]){
 	}
 	
 void showReady(){
-<<<<<<< HEAD
 	sys_req(WRITE,DEFAULT_DEVICE,"\nReady Queue: \n",&userCountPtr);
-=======
 	//returns the pointer of the ready queue 
->>>>>>> 7b1af4e1ed3f38ff20e6c56a6d3e3b968302049e
 	queue* temp = getReadyQueue();
 	pcb* PCB = temp->head;
 	   while (PCB != NULL){
@@ -143,11 +129,8 @@ void showReady(){
 }
 }
 void showBlocked(){
-<<<<<<< HEAD
 	sys_req(WRITE,DEFAULT_DEVICE,"\nBlocked Queue: \n",&userCountPtr);
-=======
 	//returns a pointer to the blocked queue 
->>>>>>> 7b1af4e1ed3f38ff20e6c56a6d3e3b968302049e
 queue* temp = getBlockedQueue();
 pcb* PCB = temp->head;
 	while(PCB !=NULL){
@@ -167,20 +150,27 @@ void showAll(){
 //----------------Temp Methods------------------
 void createPCB(char name[], int pcbClass,int priority){
 	//takes in the parameters given and calls setupPCB then adds the information to the ready queue.
-	pcb* temp = setupPCB(name,pcbClass,priority);
-	addToReadyQueue(temp);
+	if((findPCB(name) == NULL && strlen(name)>=8 ) && (pcbClass == 0 || pcbClass == 1) && (priority>=0 && priority <10)){
+		pcb* temp = setupPCB(name,pcbClass,priority);
+		addToReadyQueue(temp);
+	}
+	else{
+		sys_req(WRITE,DEFAULT_DEVICE,"Invalid input\n",&nameCountPtr);
+	}
+	
 }
 
 void deletePCB(char name[]){
 	//locates the PCB and removes it from the queue then frees the memory allocated to that PCB.
-pcb* temp = findPCB(name);
+	pcb* temp = findPCB(name);
 	if(temp == NULL){
 		sys_req(WRITE,DEFAULT_DEVICE,WRONGNAME,&nameCountPtr);
 	}
 	else{
 		removeFromQueue(temp);
+		freePCB(temp);
 	}
-	freePCB(temp);
+	
 
 
 }
