@@ -18,7 +18,7 @@ char date[10];
 char MENU[]={"\nFirefox MPX\n0: help \n1: Set Date \n2: Set Time \n3: Display Date \n4: Display Time\n5: Version\n6: Shut Down \n7: Suspend \n8: Resume \n9: Set Priority \n10: Show PCB \n11: Show All \n12: Show Ready\n13: Show Block \n14: Create PCB \n15: Delete PCB \n16: Block \n17: Unblock \nPlease enter your choice, one option at a time, entering only the number corresponding with the option:\n"};
 char WRONGFORMAT[]={"Please insert the correct format\n"};
 char CONFIRMATION[]={"Enter y + enter to shutdown press n + enter to go back to menu:\n"}; 
-char VERSION[]={"1.1 \nCompletion Date:9/09/21\n"};
+char VERSION[]={"2.1 \nCompletion Date:9/30/21\n"};
 char HELP[]={};
 
 
@@ -36,17 +36,6 @@ countPtr=100;
 //get input from polling and stores it into userInput
 sys_req(READ,DEFAULT_DEVICE,userInput,&countPtr);
 bufferTrack=countPtr;
-//start of testing lines
-/*
-unsigned char temp = 'a';
-struct stack stk = {temp,temp};
-
-struct pcb PCB = {"Name","Ready",2, "Ready",stk};
-
-addToReadyQueue(PCB);
-
-//end of testing lines
-*/
 while(!quit){
 //if 0 is stored into the userInput at location 0
 if(userInput[0] == '0'){
@@ -56,6 +45,7 @@ comHand();
 }
 //if 1 is stored into the userInput at location 0
 if(userInput[0]=='1'){
+	//if 0 is stored into the userInput at location 1
 	//Show PCB
 	if(userInput[1]=='0'){
 	sys_req(WRITE,DEFAULT_DEVICE,"Enter process name\n",&menuCountPtr);
@@ -65,24 +55,28 @@ if(userInput[0]=='1'){
 	clearInput();
 	comHand();
 	}
+	//if 1 is stored into the userInput at location 1
 	//Show All
 	else if(userInput[1]=='1'){
 	showAll();
 	clearInput();
 	comHand();
 	}
+	//if 2 is stored into the userInput at location 1
 	//Show Ready
 	else if(userInput[1]=='2'){
 	showReady();
 	clearInput();
 	comHand();
 	}
+	//if 3 is stored into the userInput at location 1
 	//Show Blocked
 	else if(userInput[1]=='3'){
 	showBlocked();
 	clearInput();
 	comHand();
 	}
+	//if 4 is stored into the userInput at location 1
 	//Create PCB
 	else if(userInput[1]=='4'){
 	sys_req(WRITE,DEFAULT_DEVICE,"Enter process name, a class number (0 or 1), and a priority number (name,#,#)\n",&menuCountPtr);
@@ -103,6 +97,7 @@ if(userInput[0]=='1'){
 	clearInput();
 	comHand();
 	}
+	//if 5 is stored into the userInput at location 1
 	//Delete PCB
 	else if(userInput[1]=='5'){
 	sys_req(WRITE,DEFAULT_DEVICE,"Enter process name\n",&menuCountPtr);
@@ -112,6 +107,7 @@ if(userInput[0]=='1'){
 	clearInput();
 	comHand();
 	}
+	//if 6 is stored into the userInput at location 1
 	//Block
 	else if(userInput[1]=='6'){
 	sys_req(WRITE,DEFAULT_DEVICE,"Enter process name\n",&menuCountPtr);
@@ -121,6 +117,7 @@ if(userInput[0]=='1'){
 	clearInput();
 	comHand();
 	}
+	//if 7 is stored into the userInput at location 1
 	//Unblock
 	else if(userInput[1]=='7'){
 	sys_req(WRITE,DEFAULT_DEVICE,"Enter process name\n",&menuCountPtr);
@@ -130,6 +127,7 @@ if(userInput[0]=='1'){
 	clearInput();
 	comHand();
 	}
+	//set date
 	else{
 	Setdate();
 	clearInput();
@@ -137,30 +135,35 @@ if(userInput[0]=='1'){
 	}
 }
 //if 2 is  is stored into the userInput at location 0
+// set time
 if(userInput[0]=='2'){
 setTime();
 clearInput();
 comHand();
 }
 //if 3 is stored into the userInput at location 0
+//get date
 if(userInput[0]=='3'){
 getDate();
 clearInput();
 comHand();
 }
 //if 4 is stored into the userInput at location 0
+//get time
 if(userInput[0]=='4'){
 getTime();
 clearInput();
 comHand();
 }
 //if 5 is stored into the userInput at location 0
+//get version
 if(userInput[0]=='5'){
 Version();
 clearInput();
 comHand();
 }
 //if 6 is stored into the userInput at location 0
+//shut down
 if(userInput[0]=='6'){
 	//sends the confirmation to the terminal 
 sys_req(WRITE,DEFAULT_DEVICE,CONFIRMATION,&menuCountPtr);
@@ -181,6 +184,7 @@ else if(userInput[0]=='n'){
 		clearInput();
 }
 }
+//if 7 is stored into the userInput at location 0
 //Suspend
 if(userInput[0]=='7'){
 sys_req(WRITE,DEFAULT_DEVICE,"Enter process name\n",&menuCountPtr);
@@ -190,6 +194,7 @@ Suspend(userInput);
 clearInput();
 comHand();
 }
+//if 8 is stored into the userInput at location 0
 //Resume
 if(userInput[0]=='8'){
 sys_req(WRITE,DEFAULT_DEVICE,"Enter process name\n",&menuCountPtr);
@@ -199,6 +204,7 @@ Resume(userInput);
 clearInput();
 comHand();
 }
+//if 9 is stored into the userInput at location 0
 //Set Priority
 if(userInput[0]=='9'){
 sys_req(WRITE,DEFAULT_DEVICE,"Enter process name and new priority number (name,#)\n",&menuCountPtr);
