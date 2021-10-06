@@ -1,4 +1,5 @@
 #include "userCommandsR3.h"
+#include "../R2/processQueues.h"
 
 //temp for R3
 void yield(){
