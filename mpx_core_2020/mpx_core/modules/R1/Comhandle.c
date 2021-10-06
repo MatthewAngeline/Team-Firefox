@@ -44,7 +44,7 @@ clearInput();
 comHand();
 }
 //if 1 is stored into the userInput at location 0
-if(userInput[0]=='1'){
+else if(userInput[0]=='1'){
 	//if 0 is stored into the userInput at location 1
 	//Show PCB
 	if(userInput[1]=='0'){
@@ -136,95 +136,98 @@ if(userInput[0]=='1'){
 }
 //if 2 is  is stored into the userInput at location 0
 // set time
-if(userInput[0]=='2'){
-setTime();
-clearInput();
-comHand();
+else if(userInput[0]=='2'){
+	setTime();
+	clearInput();
+	comHand();
 }
 //if 3 is stored into the userInput at location 0
 //get date
-if(userInput[0]=='3'){
-getDate();
-clearInput();
-comHand();
+else if(userInput[0]=='3'){
+	getDate();
+	clearInput();
+	comHand();
 }
 //if 4 is stored into the userInput at location 0
 //get time
-if(userInput[0]=='4'){
-getTime();
-clearInput();
-comHand();
+else if(userInput[0]=='4'){
+	getTime();
+	clearInput();
+	comHand();
 }
 //if 5 is stored into the userInput at location 0
 //get version
-if(userInput[0]=='5'){
-Version();
-clearInput();
-comHand();
+else if(userInput[0]=='5'){
+	Version();
+	clearInput();
+	comHand();
 }
 //if 6 is stored into the userInput at location 0
 //shut down
-if(userInput[0]=='6'){
+else if(userInput[0]=='6'){
 	//sends the confirmation to the terminal 
-sys_req(WRITE,DEFAULT_DEVICE,CONFIRMATION,&menuCountPtr);
-memset(userInput, '\0', 100);
-countPtr=100;
-clearInput();
-//get input from polling
-sys_req(READ,DEFAULT_DEVICE,userInput,&countPtr);
-bufferTrack=countPtr;
-//if y is stores it at location 0 enter this statement
-if(userInput[0]=='y'){
-quit=1;
-break;
-}
-//if n is stores it at location 0 enter this statement
-else if(userInput[0]=='n'){
-		comHand();
-		clearInput();
-}
+	sys_req(WRITE,DEFAULT_DEVICE,CONFIRMATION,&menuCountPtr);
+	memset(userInput, '\0', 100);
+	countPtr=100;
+	clearInput();
+	//get input from polling
+	sys_req(READ,DEFAULT_DEVICE,userInput,&countPtr);
+	bufferTrack=countPtr;
+	//if y is stores it at location 0 enter this statement
+	if(userInput[0]=='y'){
+	quit=1;
+	break;
+	}
+	//if n is stores it at location 0 enter this statement
+	else if(userInput[0]=='n'){
+			comHand();
+			clearInput();
+	}
 }
 //if 7 is stored into the userInput at location 0
 //Suspend
-if(userInput[0]=='7'){
-sys_req(WRITE,DEFAULT_DEVICE,"Enter process name\n",&menuCountPtr);
-clearInput();
-sys_req(READ,DEFAULT_DEVICE,userInput,&countPtr);
-Suspend(userInput);
-clearInput();
-comHand();
+else if(userInput[0]=='7'){
+	sys_req(WRITE,DEFAULT_DEVICE,"Enter process name\n",&menuCountPtr);
+	clearInput();
+	sys_req(READ,DEFAULT_DEVICE,userInput,&countPtr);
+	Suspend(userInput);
+	clearInput();
+	comHand();
 }
 //if 8 is stored into the userInput at location 0
 //Resume
-if(userInput[0]=='8'){
-sys_req(WRITE,DEFAULT_DEVICE,"Enter process name\n",&menuCountPtr);
-clearInput();
-sys_req(READ,DEFAULT_DEVICE,userInput,&countPtr);
-Resume(userInput);
-clearInput();
-comHand();
+else if(userInput[0]=='8'){
+	sys_req(WRITE,DEFAULT_DEVICE,"Enter process name\n",&menuCountPtr);
+	clearInput();
+	sys_req(READ,DEFAULT_DEVICE,userInput,&countPtr);
+	Resume(userInput);
+	clearInput();
+	comHand();
 }
 //if 9 is stored into the userInput at location 0
 //Set Priority
-if(userInput[0]=='9'){
-sys_req(WRITE,DEFAULT_DEVICE,"Enter process name and new priority number (name,#)\n",&menuCountPtr);
-clearInput();
-sys_req(READ,DEFAULT_DEVICE,userInput,&countPtr);
-char* token = strtok(userInput, ",");
+else if(userInput[0]=='9'){
+	sys_req(WRITE,DEFAULT_DEVICE,"Enter process name and new priority number (name,#)\n",&menuCountPtr);
+	clearInput();
+	sys_req(READ,DEFAULT_DEVICE,userInput,&countPtr);
+	char* token = strtok(userInput, ",");
 
-int count = 0;
-char* input[2];
-while(count<2) {
-input[count]=token;
-token = strtok(NULL, ",");
-count++;
+	int count = 0;
+	char* input[2];
+	while(count<2) {
+	input[count]=token;
+	token = strtok(NULL, ",");
+	count++;
+	}
+	int priority = atoi(input[1]);
+
+	setPriority(input[0],priority);
+	clearInput();
+	comHand();
+
 }
-int priority = atoi(input[1]);
-
-setPriority(input[0],priority);
-clearInput();
-comHand();
-
+else{
+	comHand();
 }
 
 }
