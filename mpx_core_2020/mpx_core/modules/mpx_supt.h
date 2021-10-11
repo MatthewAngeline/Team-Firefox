@@ -28,6 +28,12 @@
 #define DEFAULT_DEVICE 111
 #define COM_PORT 222
 
+typedef struct{
+u32int  gs, fs, es, ds;
+u32int  edi, esi, ebp, esp, ebx, edx, ecx, eax;
+u32int  eip, cs, eflags;
+}context;
+
 typedef struct {
   int op_code;
   int device_id;
@@ -86,5 +92,7 @@ int sys_free_mem(void *ptr);
   Params..: None
 */
 void idle();
+
+u32int * sys_call(context* registers);
 
 #endif

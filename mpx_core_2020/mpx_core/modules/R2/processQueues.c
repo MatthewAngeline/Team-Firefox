@@ -45,7 +45,7 @@ pcb* setupPCB(char name[], int pcbClass, int priority){
 	p->priority = priority;
 	p->nextPCB=NULL;
 	p->prevPCB=NULL;
-	//p->stackHead = p->stackBase + 1024 - sizeof(struct context);
+	p->stackHead = p->stackBase + 1024 - sizeof(context);
 	strcpy(p->state,"Ready");
 	strcpy(p->status,"Not Suspended");
 	

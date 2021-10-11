@@ -9,6 +9,9 @@
 #include <mem/heap.h>
 #include <string.h>
 #include <core/serial.h>
+#include "R2/processQueues.h"
+#include "R3/userCommandsR3.h"
+
 
 // global variable containing parameter used when making 
 // system calls via sys_req
@@ -18,6 +21,8 @@ param params;
 int current_module = -1;  
 static int io_module_active = 0;
 static int mem_module_active = 0;
+
+pcb * COP;
 
 // If a student created heap manager is implemented this
 // is a pointer to the student's "malloc" operation.
@@ -190,4 +195,49 @@ void idle()
 	sys_req( WRITE, DEFAULT_DEVICE, msg, &count);
     sys_req(IDLE, DEFAULT_DEVICE, NULL, NULL);
   }
+}
+
+u32int * sys_call(context* registers){
+	queue* readyQueue = getReadyQueue();
+	if(COP == NULL){
+	  COP  = registers;
+	}
+	else if(params.op_code == IDLE){
+	COP = registers;
+	
+	}
+	else if(params.op_code == EXIT){
+	freePCB(COP);
+	}
+	
+	if(readyQueue->head != NULL){
+	removeFromQueue();
+	//that pcb set state to running...
+	//assign COP to that PCB
+	return COP;
+	}
+	else{
+	return COP;
+}	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

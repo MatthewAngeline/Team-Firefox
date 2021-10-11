@@ -5,6 +5,7 @@
 #include <../include/core/io.h>
 #include "../R2/processQueues.h"
 #include "../R2/userCommands.h"
+#include "../R3/userCommandsR3.h"
 
 
 int countPtr;
@@ -15,7 +16,7 @@ int bufferTrack=0;
 char userInput[100];
 char time[10];
 char date[10];
-char MENU[]={"\nFirefox MPX\n0: help \n1: Set Date \n2: Set Time \n3: Display Date \n4: Display Time\n5: Version\n6: Shut Down \n7: Suspend \n8: Resume \n9: Set Priority \n10: Show PCB \n11: Show All \n12: Show Ready\n13: Show Block \n14: Create PCB \n15: Delete PCB \n16: Block \n17: Unblock \nPlease enter your choice, one option at a time, entering only the number corresponding with the option:\n"};
+char MENU[]={"\nFirefox MPX\n0: help \n1: Set Date \n2: Set Time \n3: Display Date \n4: Display Time\n5: Version\n6: Shut Down \n7: Suspend \n8: Resume \n9: Set Priority \n10: Show PCB \n11: Show All \n12: Show Ready\n13: Show Block \n14: Create PCB \n15: Delete PCB \n16: Block \n17: Unblock \n18: Yield \n19: LoadR3 \nPlease enter your choice, one option at a time, entering only the number corresponding with the option:\n"};
 char WRONGFORMAT[]={"Please insert the correct format\n"};
 char CONFIRMATION[]={"Enter y + enter to shutdown press n + enter to go back to menu:\n"}; 
 char VERSION[]={"2.1 \nCompletion Date:9/30/21\n"};
@@ -125,6 +126,13 @@ else if(userInput[0]=='1'){
 	sys_req(READ,DEFAULT_DEVICE,userInput,&countPtr);
 	unblock(userInput);
 	clearInput();
+	comHand();
+	}
+	else if(userInput[1]=='8'){
+	yield();
+	}
+	else if(userInput[1]=='9'){
+	loadr3();
 	comHand();
 	}
 	//set date

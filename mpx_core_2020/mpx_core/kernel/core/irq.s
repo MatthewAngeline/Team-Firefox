@@ -113,7 +113,6 @@ reserved:
 coprocessor:
 	call do_coprocessor
 	iret
-
 ;;; System call interrupt handler. Pushes all the x86 registers
 ;;; onto the stack followed by ds,es,fs,gs (see context structure).
 ;;; Pushes esp last, which the function can cast to a context and

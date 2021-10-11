@@ -2,7 +2,7 @@
 #define _PROCESSQUEUES_H
 
 
-typedef struct pcb {
+typedef struct pcb{
 	char name[50];
 	int pcbClass;
 	//higher number = higher priority
