@@ -2,6 +2,7 @@
 #define _MPX_SUPT_H
 
 #include <system.h>
+#include "R3/userCommandsR3.h"
 
 #define EXIT 0
 #define IDLE 1
@@ -28,11 +29,7 @@
 #define DEFAULT_DEVICE 111
 #define COM_PORT 222
 
-typedef struct{
-u32int  gs, fs, es, ds;
-u32int  edi, esi, ebp, esp, ebx, edx, ecx, eax;
-u32int  eip, cs, eflags;
-}context;
+
 
 typedef struct {
   int op_code;

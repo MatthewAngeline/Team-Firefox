@@ -17,6 +17,7 @@ R2/processQueues.o\
 R1/keyboard_polling.o\
 R2/userCommands.o\
 R3/userCommandsR3.o\
+R4/infiniteCommands.o\
 
 
 

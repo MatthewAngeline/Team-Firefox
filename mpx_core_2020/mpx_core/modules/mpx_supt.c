@@ -211,7 +211,8 @@ u32int * sys_call(context* registers){
 	}
 	
 	if(readyQueue->head != NULL){
-	removeFromQueue();
+	COP = removeFromQueue(readyQueue->head->name);
+	strcpy(COP->state, "running");
 	//that pcb set state to running...
 	//assign COP to that PCB
 	return COP;
