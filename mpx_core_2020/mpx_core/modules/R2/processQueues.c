@@ -45,6 +45,7 @@ pcb* setupPCB(char name[], int pcbClass, int priority){
 	p->priority = priority;
 	p->nextPCB=NULL;
 	p->prevPCB=NULL;
+	p->stackBase = p->stack;
 	p->stackHead = p->stackBase + 1024 - sizeof(context);
 	strcpy(p->state,"Ready");
 	strcpy(p->status,"Not Suspended");
@@ -158,7 +159,7 @@ void addToBlockedQueue(pcb* PCB){
 }
 
 //returns 0 on error, 1 on success
-int removeFromQueue(pcb* PCB){
+pcb* removeFromQueue(pcb* PCB){
 	queue* q;
 	pcb* locator;
 	//finds the correct queue based off of the PCB state
@@ -199,7 +200,7 @@ int removeFromQueue(pcb* PCB){
 			//decrements count once removed
 			q->count--;
 			//returns 1 as a success
-			return 1;
+			return PCB;
 		}
 		//PCB not found yet
 		else{
@@ -208,7 +209,7 @@ int removeFromQueue(pcb* PCB){
 			}
 			//returns error if not found and there is no other PCBs
 			else{
-				return 0;
+				return NULL;
 			}
 		}
 		

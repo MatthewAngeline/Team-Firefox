@@ -16,6 +16,7 @@
 // global variable containing parameter used when making 
 // system calls via sys_req
 param params;   
+context* oldContext;
 
 // global for the current module
 int current_module = -1;  
@@ -200,10 +201,10 @@ void idle()
 u32int * sys_call(context* registers){
 	queue* readyQueue = getReadyQueue();
 	if(COP == NULL){
-	  COP  = registers;
+	  oldContext = registers;
 	}
 	else if(params.op_code == IDLE){
-	COP = registers;
+	COP->stackHead = (unsigned char*) registers;
 	
 	}
 	else if(params.op_code == EXIT){
@@ -211,34 +212,13 @@ u32int * sys_call(context* registers){
 	}
 	
 	if(readyQueue->head != NULL){
-	COP = removeFromQueue(readyQueue->head->name);
+	COP = removeFromQueue(readyQueue->head);
 	strcpy(COP->state, "running");
 	//that pcb set state to running...
 	//assign COP to that PCB
-	return COP;
+	return (u32int *) COP->stackHead;
 	}
 	else{
-	return COP;
+	return (u32int *) oldContext;
 }	
-	
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }

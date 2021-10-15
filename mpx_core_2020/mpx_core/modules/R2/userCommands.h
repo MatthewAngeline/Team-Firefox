@@ -3,7 +3,7 @@
 
 
 //temp commands
-void createPCB(char name[], int pcbClass, int priority);
+pcb * createPCB(char name[], int pcbClass, int priority);
 void deletePCB(char name[]);
 void block(char name[]);
 void unblock(char name[]);

@@ -38,7 +38,7 @@ void addToReadyQueue(pcb* PCB);
 
 void addToBlockedQueue(pcb* PCB);
 
-int removeFromQueue(pcb* PCB);
+pcb* removeFromQueue(pcb* PCB);
 
 #endif
 

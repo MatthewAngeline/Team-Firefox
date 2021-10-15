@@ -38,6 +38,12 @@ typedef struct {
   int *count_ptr;
 } param;
 
+typedef struct {
+u32int gs, fs, es, ds;
+u32int edi, esi, ebp, esp, ebx, edx, ecx, eax;
+u32int eip, cs, eflags;
+}context;
+
 /*
   Procedure..: sys_req
   Description..: Generate interrupt 60H

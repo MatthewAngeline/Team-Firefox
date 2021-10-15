@@ -148,14 +148,16 @@ void showAll(){
 }
 
 //----------------Temp Methods------------------
-void createPCB(char name[], int pcbClass,int priority){
+pcb * createPCB(char name[], int pcbClass,int priority){
 	//takes in the parameters given and calls setupPCB then adds the information to the ready queue.
 	if((findPCB(name) == NULL && strlen(name)>=8 ) && (pcbClass == 0 || pcbClass == 1) && (priority>=0 && priority <10)){
 		pcb* temp = setupPCB(name,pcbClass,priority);
 		addToReadyQueue(temp);
+		return temp;
 	}
 	else{
 		sys_req(WRITE,DEFAULT_DEVICE,"Invalid input\n",&nameCountPtr);
+		return NULL;
 	}
 	
 }
