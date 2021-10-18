@@ -8,7 +8,7 @@
 #include "../R2/userCommands.h"
 
 void yield();
-pcb* loadr3(char name[], int func);
+pcb* loadr3();
 
 
 

@@ -130,12 +130,12 @@ else if(userInput[0]=='1'){
 	}
 	else if(userInput[1]=='8'){
 	yield();
+	comHand();
 	}
 	else if(userInput[1]=='9'){
-	sys_req(WRITE,DEFAULT_DEVICE,"Enter process name and function number (name, #)\n",&menuCountPtr);
 	clearInput();
-	sys_req(READ,DEFAULT_DEVICE,userInput,&countPtr);
-	char* token = strtok(userInput, ",");
+	//sys_req(READ,DEFAULT_DEVICE,userInput,&countPtr);
+	/*char* token = strtok(userInput, ",");
 	int count = 0;
 	char* input[2];
 	while(count<2) {
@@ -143,8 +143,8 @@ else if(userInput[0]=='1'){
 	token = strtok(NULL, ",");
 	count++;
 	}
-	int func = atoi(input[1]);
-	loadr3(input[0], func);
+	int func = atoi(input[1]);*/
+	loadr3();
 	comHand();
 	}
 	//set date
