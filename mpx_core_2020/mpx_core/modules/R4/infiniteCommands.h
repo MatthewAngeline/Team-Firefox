@@ -1,5 +1,6 @@
-#ifndef _USERCOMMANDSR3_H
-#define _USERCOMMANDSR3_H
+#ifndef _INFINITECOMMANDS_H
+#define _INFINITECOMMANDS_H
 
+void foreverIdle();
 #endif
 
