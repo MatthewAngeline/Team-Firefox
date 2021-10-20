@@ -2,5 +2,18 @@
 #define _INFINITECOMMANDS_H
 
 void foreverIdle();
+void checkAlarm();
+void setAlarm(char message[], char name[], int hr, int min, int sec);
+void removealarm(char name[]);
+
+typedef struct alarm{
+	char name[10];
+	char message[50];
+	int hour;
+	int mins;
+	int secs;
+	
+
+}alarm;
 #endif
 

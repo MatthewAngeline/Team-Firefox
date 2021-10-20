@@ -26,7 +26,7 @@ typedef struct queue{
 
 queue* getReadyQueue();
 queue* getBlockedQueue();
-queue* getSuspenedBlockedQueue();
+queue* getSuspendedBlockedQueue();
 queue* getSuspenedReadyQueue();
 
 pcb* allocatePCB();
@@ -41,7 +41,7 @@ void addToReadyQueue(pcb* PCB);
 
 void addToBlockedQueue(pcb* PCB);
 
-void addToSuspenedBlockedQueue(pcb* PCB);
+void addToSuspendedBlockedQueue(pcb* PCB);
 
 void addToSuspendedReadyQueue(pcb* PCB);
 

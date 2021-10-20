@@ -241,11 +241,22 @@ pcb* removeFromQueue(pcb* PCB){
 	pcb* locator;
 	//finds the correct queue based off of the PCB state
 	if(strcmp(PCB->state,"Ready")==0){
-		q = getReadyQueue();
+		if (strcmp(PCB->status,"Suspended")==0){
+		q = getSuspenedReadyQueue();
+		}
+		else{
+			q = getReadyQueue();
+		}
 	}
 	else if (strcmp(PCB->state,"Blocked")==0){
-		q = getBlockedQueue();
+		if (strcmp(PCB->status,"Suspended")==0){
+			q = getSuspendedBlockedQueue();
+		}
+		else{
+			q = getBlockedQueue();
+		}
 	}
+
 	if(q->head != NULL)locator = q->head;
 	//returns 0 if there is no PCB in queue
 	else return 0;

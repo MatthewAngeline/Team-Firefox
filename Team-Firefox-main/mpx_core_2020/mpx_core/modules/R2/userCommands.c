@@ -11,6 +11,7 @@ int nameCountPtr=99;
 int userCountPtr = 100;
 //Suspend looks for a pcb with the given name and sets its status to suspended.
 void Suspend(char name[]){
+	
 	pcb* temp = findPCB(name);
 
 	//checks to see if there is a pcb with that name, if find returns NULL then it displays the wrong name message
@@ -20,6 +21,13 @@ void Suspend(char name[]){
 
 	else{
 	strcpy(temp->status,"Suspended"); 
+	}
+	
+	if(strcmp(temp->state, "Ready") == 0){
+		addToSuspendedReadyQueue(temp);
+	}
+	else{
+		addToSuspendedBlockedQueue(temp);
 	}
 
 }
@@ -43,15 +51,27 @@ void Resume(char name[]){
 
 }
 void resumeAll(){
-queue* temp = getSuspenedReadyQueue();
-pcb* variable = temp->head;
-while(variable != NULL){
-removeFromQueue(variable);
-strcpy(variable->status,"Ready");
-addToReadyQueue(variable);
-variable = variable->nextPCB;
+	queue* temp = getSuspenedReadyQueue();
+	
+	pcb* variable = temp->head;
+	while(variable != NULL){
+	removeFromQueue(variable);
+	strcpy(variable->status,"Not Suspended");
+	addToReadyQueue(variable);
+	variable = temp->head;
 
 }
+	temp = getSuspendedBlockedQueue();
+	
+	variable = temp->head;
+	while(variable != NULL){
+	removeFromQueue(variable);
+	strcpy(variable->status,"Not Suspended");
+	addToReadyQueue(variable);
+	variable = temp->head;
+
+}
+
 
 }
 
@@ -154,10 +174,10 @@ pcb* PCB = temp->head;
 
 }
 }
-/**void showSuspendedBlocked(){
-sys_req(WRITE,DEFAULT_DEVICE,"\n Suspended Blocked Queue: \n",&userCountPtr);
+void showSuspendedBlocked(){
+sys_req(WRITE,DEFAULT_DEVICE,"\nSuspended Blocked Queue: \n",&userCountPtr);
 	//returns the pointer of the ready queue 
-	queue* temp = getSuspenedBlockedQueue();
+	queue* temp = getSuspendedBlockedQueue();
 	pcb* PCB = temp->head;
 	   while (PCB != NULL){
 		   //calls showPCB on each of the items within the ready queue until the current PCB is null. 
@@ -165,7 +185,7 @@ sys_req(WRITE,DEFAULT_DEVICE,"\n Suspended Blocked Queue: \n",&userCountPtr);
 		PCB = PCB->nextPCB;
 	
 }
-}**/
+}
 void showSuspendedReady(){	
 sys_req(WRITE,DEFAULT_DEVICE,"\nSuspended Ready Queue: \n",&userCountPtr);
 	//returns a pointer to the blocked queue 
@@ -183,7 +203,7 @@ void showAll(){
 	showReady();
 	showSuspendedReady();
 	showBlocked();
-	//showSuspendedBlocked();
+	showSuspendedBlocked();
 }
 
 //----------------Temp Methods------------------
@@ -236,7 +256,12 @@ void block(char name[]){
 		temp->nextPCB = NULL;
 		temp->prevPCB = NULL;
 		//adds it to the blocked queue
-		addToBlockedQueue(temp);
+		if(strcmp(temp->status, "Suspended") == 0){
+			addToSuspendedBlockedQueue(temp);
+		}
+		else{
+			addToBlockedQueue(temp);
+		}
 	}
 }
 
