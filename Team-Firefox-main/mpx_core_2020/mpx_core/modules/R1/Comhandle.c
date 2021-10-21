@@ -6,6 +6,7 @@
 #include "../R2/processQueues.h"
 #include "../R2/userCommands.h"
 #include "../R3/userCommandsR3.h"
+#include "../R4/infiniteCommands.h"
 
 
 int countPtr;
@@ -16,7 +17,7 @@ int bufferTrack=0;
 char userInput[100];
 char time[10];
 char date[10];
-char MENU[]={"\nFirefox MPX\n0: help \n1: Set Date \n2: Set Time \n3: Display Date \n4: Display Time\n5: Version\n6: Shut Down \n7: Suspend \n8: Resume \n9: Set Priority \n10: Show PCB \n11: Show All \n12: Show Ready\n13: Show Block \n14: Create PCB \n15: Delete PCB \n16: Block \n17: Unblock \n18: Yield \n19: LoadR3 \n20: Resume All\n\nPlease enter your choice, one option at a time, entering only the number corresponding with the option:\n"};
+char MENU[]={"\nFirefox MPX\n0: help \n1: Set Date \n2: Set Time \n3: Display Date \n4: Display Time\n5: Version\n6: Shut Down \n7: Suspend \n8: Resume \n9: Set Priority \n10: Show PCB \n11: Show All \n12: Show Ready\n13: Show Block \n14: Create PCB \n15: Delete PCB \n16: Block \n17: Unblock \n18: Set Alarm \n19: LoadR3 \n20: Resume All\n\nPlease enter your choice, one option at a time, entering only the number corresponding with the option:\n"};
 char WRONGFORMAT[]={"Please insert the correct format\n"};
 char CONFIRMATION[]={"Enter y + enter to shutdown press n + enter to go back to menu:\n"}; 
 char VERSION[]={"3.0 \nCompletion Date:9/30/21\n"};
@@ -42,7 +43,6 @@ while(!quit){
 if(userInput[0] == '0'){
 Help();
 clearInput();
- comHand();
 }
 //if 1 is stored into the userInput at location 0
 else if(userInput[0]=='1'){
@@ -54,28 +54,24 @@ else if(userInput[0]=='1'){
 	sys_req(READ,DEFAULT_DEVICE,userInput,&countPtr);
 	showPCB(userInput);
 	clearInput();
-	 comHand();
 	}
 	//if 1 is stored into the userInput at location 1
 	//Show All
 	else if(userInput[1]=='1'){
 	showAll();
 	clearInput();
-	 comHand();
 	}
 	//if 2 is stored into the userInput at location 1
 	//Show Ready
 	else if(userInput[1]=='2'){
 	showReady();
 	clearInput();
-	 comHand();
 	}
 	//if 3 is stored into the userInput at location 1
 	//Show Blocked
 	else if(userInput[1]=='3'){
 	showBlocked();
-	clearInput(); 
-	comHand();
+	clearInput();
 	}
 	//if 4 is stored into the userInput at location 1
 	//Create PCB
@@ -96,7 +92,6 @@ else if(userInput[0]=='1'){
 
 	createPCB(input[0],class,priority,input[3]);
 	clearInput();
-	 comHand();
 	}
 	//if 5 is stored into the userInput at location 1
 	//Delete PCB
@@ -106,7 +101,6 @@ else if(userInput[0]=='1'){
 	sys_req(READ,DEFAULT_DEVICE,userInput,&countPtr);
 	deletePCB(userInput);
 	clearInput();
-	 comHand();
 	}
 	//if 6 is stored into the userInput at location 1
 	//Block
@@ -116,7 +110,6 @@ else if(userInput[0]=='1'){
 	sys_req(READ,DEFAULT_DEVICE,userInput,&countPtr);
 	block(userInput);
 	clearInput();
-	 comHand();
 	}
 	//if 7 is stored into the userInput at location 1
 	//Unblock
@@ -126,21 +119,19 @@ else if(userInput[0]=='1'){
 	sys_req(READ,DEFAULT_DEVICE,userInput,&countPtr);
 	unblock(userInput);
 	clearInput();
-	 comHand();
 	}
 	else if(userInput[1]=='8'){
-	yield();
+	clearInput();
+	setAlarm();
 	}
 	else if(userInput[1]=='9'){
 	clearInput();
 	loadr3();
-	 comHand();
 	}
 	//set date
 	else{
 	Setdate();
 	clearInput();
-	 comHand();
 	}
 }
 //if 2 is  is stored into the userInput at location 0
@@ -149,7 +140,6 @@ else if(userInput[0]=='2'){
 if(userInput[1]=='0'){
 resumeAll();
 	clearInput();
-	 comHand();
 	
 	}
 	else if(userInput[1]=='1'){
@@ -158,7 +148,6 @@ resumeAll();
 else{
 	setTime();
 	clearInput();
-	 comHand();
 
 }
 }
@@ -167,7 +156,6 @@ else{
 else if(userInput[0]=='3'){
 	getDate();
 	clearInput();
-	 comHand();
 	
 }
 //if 4 is stored into the userInput at location 0
@@ -175,7 +163,6 @@ else if(userInput[0]=='3'){
 else if(userInput[0]=='4'){
 	getTime();
 	clearInput();
-	 comHand();
 	
 }
 //if 5 is stored into the userInput at location 0
@@ -183,7 +170,6 @@ else if(userInput[0]=='4'){
 else if(userInput[0]=='5'){
 	Version();
 	clearInput();
-	 comHand();
 	
 }
 //if 6 is stored into the userInput at location 0
@@ -217,7 +203,6 @@ else if(userInput[0]=='7'){
 	sys_req(READ,DEFAULT_DEVICE,userInput,&countPtr);
 	Suspend(userInput);
 	clearInput();
-	 comHand();
 	
 }
 //if 8 is stored into the userInput at location 0
@@ -228,7 +213,6 @@ else if(userInput[0]=='8'){
 	sys_req(READ,DEFAULT_DEVICE,userInput,&countPtr);
 	Resume(userInput);
 	clearInput();
-	 comHand();
 	
 }
 //if 9 is stored into the userInput at location 0
@@ -256,8 +240,9 @@ else if(userInput[0]=='9'){
 else{
 comHand();
 }
-
+yield();
 }
+
 return 0;
 }
 

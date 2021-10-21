@@ -14,6 +14,8 @@ void yield(){
 }
 
 pcb* loadr3(){
+
+
 	int i = 1;
 	char* procName[5]={"TestName1","TestName2","TestName3","TestName4","TestName5"};
 	pcb* new_pcb;
@@ -47,12 +49,15 @@ pcb* loadr3(){
 	cp -> eflags = 0x202 ;
 	i++;
 	}
+		
 	
-	
-	
-	
-	
-	
-	
-	return new_pcb ;
+
+
+
+return new_pcb ;
 }
+
+
+
+
+

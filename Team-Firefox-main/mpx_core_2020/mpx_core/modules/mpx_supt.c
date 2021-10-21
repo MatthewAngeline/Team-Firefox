@@ -199,20 +199,22 @@ void idle()
 }
 
 u32int * sys_call(context* registers){
+	klogv("syscall");
 	queue* readyQueue = getReadyQueue();
 	if(COP == NULL){
 	  oldContext = registers;
 	}
 	else if(params.op_code == IDLE){
 	COP->stackHead = (unsigned char*) registers;
-	strcpy(COP->state,"Ready");
-	addToReadyQueue(COP);
 	
+	// set state to ready and put back in ready queueu
+	strcpy(COP->state, "ready");
+	addToReadyQueue(COP);
 	}
 	else if(params.op_code == EXIT){
 	freePCB(COP);
 	}
-	
+	klogv("syscall end");
 	if(readyQueue->head != NULL){
 	COP = removeFromQueue(readyQueue->head);
 	strcpy(COP->state, "running");

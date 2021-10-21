@@ -3,7 +3,8 @@
 
 void foreverIdle();
 void checkAlarm();
-void setAlarm(char message[], char name[], int hr, int min, int sec);
+
+void setAlarm();
 void removealarm(char name[]);
 
 typedef struct alarm{
@@ -15,5 +16,6 @@ typedef struct alarm{
 	
 
 }alarm;
+
 #endif
 

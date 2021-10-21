@@ -5,7 +5,10 @@
 #include <../include/core/serial.h>
 #include <../include/core/io.h>
 
-alarm alarmList[30];
+char userInput[100];
+
+alarm* alarmList[30];
+int count = 100;
 
 void foreverIdle() {
 char message[30];
@@ -15,13 +18,15 @@ char message[30];
 	strcpy(message, "IDLE Forever Executing.\n");
 	count = strlen(message);
   
-  while(1){
+  
+ 	 
 	sys_req( WRITE, DEFAULT_DEVICE, message, &count);
 	sys_req(IDLE, DEFAULT_DEVICE, NULL, NULL);
-  }
+  
 }
 
 void checkAlarm(){
+	klogv("Checking Alarm");
 	outb(0x70, 0x04);
 	unsigned char Bhrs = inb(0x71);
 	//converts it to decimal 
@@ -37,11 +42,12 @@ void checkAlarm(){
 	//converts it to decimal
 	int sec = BCDToDec(Bsec);
 	
-	alarm ref = alarmList[0];
+	alarm* ref = alarmList[0];
 	int i = 0;
 	
-	while(alarmList[i] != NULL){
-		if(hrs == ref.hour && min == ref.mins && sec == ref.secs){
+	while(i < 30){
+	
+		if(ref != NULL && hrs == ref->hour && min == ref->mins && sec == ref->secs){
 			sys_req( WRITE, DEFAULT_DEVICE, ref->message, &count);
 			alarmList[i] = NULL;
 			sys_free_mem(ref); 
@@ -51,18 +57,44 @@ void checkAlarm(){
 		
 		
 	}
+	klogv("endAlarm");
 
 }
 
-void setAlarm(char message[], char name[], int hr, int min, int sec){
-	alarm new = sys_alloc_mem(sizeof(alarm));
-	strcpy(new.name, name);
-	strcpy(new.message, message);
-	alarm.hour = hr;
-	alarm.mins = min;
-	alarm.secs = sec;
+void setAlarm(){
+	alarm* new = sys_alloc_mem(sizeof(alarm));
 	
-	alarm temp = alarmList[0];
+	char name[10];
+	sys_req(WRITE,DEFAULT_DEVICE,"Name:",&count);
+	sys_req(READ,DEFAULT_DEVICE,userInput,&count);
+	strcpy(new->name, name);
+	clearInput();
+	
+	char message[30];
+	sys_req(WRITE,DEFAULT_DEVICE,"Message:",&count);
+	sys_req(READ,DEFAULT_DEVICE,userInput,&count);
+	strcpy(new->message, message);
+	clearInput();
+	
+	sys_req(WRITE,DEFAULT_DEVICE,"Time (Hour):",&count);
+	sys_req(READ,DEFAULT_DEVICE,userInput,&count);
+	int hr = atoi(userInput);
+	new->hour = hr;
+	clearInput();
+	
+	sys_req(WRITE,DEFAULT_DEVICE,"Time (Min):",&count);
+	sys_req(READ,DEFAULT_DEVICE,userInput,&count);
+	int min = atoi(userInput);
+	new->mins = min;
+	clearInput();
+	
+	sys_req(WRITE,DEFAULT_DEVICE,"Time (Sec):",&count);
+	sys_req(READ,DEFAULT_DEVICE,userInput,&count);
+	int sec = atoi(userInput);
+	new->secs = sec;
+	clearInput();
+	
+	alarm* temp = alarmList[0];
 	int i = 0;
 	while (i<30){
 		if(temp == NULL){
@@ -81,11 +113,11 @@ void setAlarm(char message[], char name[], int hr, int min, int sec){
 }
 
 void removealarm(char name[]){
-alarm ref = alarmList[0];
+alarm* ref = alarmList[0];
 int i = 1;
 while (ref != NULL){
 
-	if (strcmp(ref.name,name)==0){
+	if (strcmp(ref->name,name)==0){
 		alarmList[i-1] = NULL;
 		sys_free_mem(ref); 
 	}
