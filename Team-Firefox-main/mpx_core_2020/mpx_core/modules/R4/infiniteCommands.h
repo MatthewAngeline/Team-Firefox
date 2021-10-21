@@ -6,6 +6,7 @@ void checkAlarm();
 
 void setAlarm();
 void removealarm();
+int checkInput(char name[], int hr, int min, int sec);
 
 typedef struct alarm{
 	char name[10];

@@ -70,37 +70,36 @@ void checkAlarm(){
 
 void setAlarm(){
 	alarm* new = sys_alloc_mem(sizeof(alarm));
+	int valid = 0;
 	
-	//char name[10];
+	while(!valid) {
 	sys_req(WRITE,DEFAULT_DEVICE,"Name:",&count);
 	sys_req(READ,DEFAULT_DEVICE,userInput,&count);
 	strcpy(new->name, userInput);
 	clearInput();
 	
-	// message[30];
 	sys_req(WRITE,DEFAULT_DEVICE,"Message:",&count);
 	sys_req(READ,DEFAULT_DEVICE,userInput,&count);
 	strcpy(new->message, userInput);
 	clearInput();
-	sys_req(WRITE,DEFAULT_DEVICE,new->message,&count);
 	
 	sys_req(WRITE,DEFAULT_DEVICE,"Time (Hour):",&count);
 	sys_req(READ,DEFAULT_DEVICE,userInput,&count);
-	int hr = atoi(userInput);
-	new->hour = hr;
+	new->hour = atoi(userInput);
 	clearInput();
 	
 	sys_req(WRITE,DEFAULT_DEVICE,"Time (Min):",&count);
 	sys_req(READ,DEFAULT_DEVICE,userInput,&count);
-	int min = atoi(userInput);
-	new->mins = min;
+	new->mins = atoi(userInput);
 	clearInput();
 	
 	sys_req(WRITE,DEFAULT_DEVICE,"Time (Sec):",&count);
 	sys_req(READ,DEFAULT_DEVICE,userInput,&count);
-	int sec = atoi(userInput);
-	new->secs = sec;
+	new->secs = atoi(userInput);
 	clearInput();
+	
+	valid = checkInput(new->name, new->hour, new->mins, new->secs);
+	}
 	
 	alarm* temp = alarmList[0];
 	int i = 0;
@@ -146,5 +145,28 @@ while (i<30){
 }
 	
 }
+
+// returns 0 if invalid, 1 if valid
+int checkInput(char name[], int hr, int min, int sec) {
+	if(hr < 24 && hr >= 0 && min < 60 && min >= 0 && sec < 60 && sec >= 0){
+		int i = 0;
+		while (i<30){
+		if (strcmp(alarmList[i]->name,name)==0){
+			sys_req(WRITE, DEFAULT_DEVICE, "Name taken\n\n",&count);
+			return 0;
+		}
+		i++;
+		}
+		return 1;
+	}
+	else{
+	sys_req(WRITE, DEFAULT_DEVICE, "Invalid time\n\n",&count);
+	return 0;
+	}
+}
+
+
+
+
 
 
