@@ -13,6 +13,7 @@ void yield(){
 	asm volatile ("int $60");
 }
 
+//loads processes given in R3
 pcb* loadr3(){
 
 
