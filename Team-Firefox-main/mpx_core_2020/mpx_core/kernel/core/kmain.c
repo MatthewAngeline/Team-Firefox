@@ -83,8 +83,8 @@ void kmain(void)
 
    // 6) Call YOUR command handler -  interface method
    //klogv("Transferring control to commhand...");
-   //comHand();
-   	while(1){
+   comHand();
+   	/**while(1){
    	pcb* new_pcb = createPCB( "ComHandle", 1 , 1,"Not Suspended"); 
 	context* cp = ( context*)( new_pcb -> stackHead ); 
 	memset ( cp , 0, sizeof ( context )); 
@@ -113,7 +113,7 @@ void kmain(void)
 	
 	asm volatile ("int $60");
 	}
-
+**/
    // 7) System Shutdown on return from your command handler
    klogv("Starting system shutdown procedure...");
    

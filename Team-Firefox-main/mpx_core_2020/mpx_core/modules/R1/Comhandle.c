@@ -42,6 +42,7 @@ while(!quit){
 if(userInput[0] == '0'){
 Help();
 clearInput();
+ comHand();
 }
 //if 1 is stored into the userInput at location 0
 else if(userInput[0]=='1'){
@@ -53,24 +54,28 @@ else if(userInput[0]=='1'){
 	sys_req(READ,DEFAULT_DEVICE,userInput,&countPtr);
 	showPCB(userInput);
 	clearInput();
+	 comHand();
 	}
 	//if 1 is stored into the userInput at location 1
 	//Show All
 	else if(userInput[1]=='1'){
 	showAll();
 	clearInput();
+	 comHand();
 	}
 	//if 2 is stored into the userInput at location 1
 	//Show Ready
 	else if(userInput[1]=='2'){
 	showReady();
 	clearInput();
+	 comHand();
 	}
 	//if 3 is stored into the userInput at location 1
 	//Show Blocked
 	else if(userInput[1]=='3'){
 	showBlocked();
-	clearInput();
+	clearInput(); 
+	comHand();
 	}
 	//if 4 is stored into the userInput at location 1
 	//Create PCB
@@ -91,6 +96,7 @@ else if(userInput[0]=='1'){
 
 	createPCB(input[0],class,priority,input[3]);
 	clearInput();
+	 comHand();
 	}
 	//if 5 is stored into the userInput at location 1
 	//Delete PCB
@@ -100,6 +106,7 @@ else if(userInput[0]=='1'){
 	sys_req(READ,DEFAULT_DEVICE,userInput,&countPtr);
 	deletePCB(userInput);
 	clearInput();
+	 comHand();
 	}
 	//if 6 is stored into the userInput at location 1
 	//Block
@@ -109,6 +116,7 @@ else if(userInput[0]=='1'){
 	sys_req(READ,DEFAULT_DEVICE,userInput,&countPtr);
 	block(userInput);
 	clearInput();
+	 comHand();
 	}
 	//if 7 is stored into the userInput at location 1
 	//Unblock
@@ -118,6 +126,7 @@ else if(userInput[0]=='1'){
 	sys_req(READ,DEFAULT_DEVICE,userInput,&countPtr);
 	unblock(userInput);
 	clearInput();
+	 comHand();
 	}
 	else if(userInput[1]=='8'){
 	yield();
@@ -125,11 +134,13 @@ else if(userInput[0]=='1'){
 	else if(userInput[1]=='9'){
 	clearInput();
 	loadr3();
+	 comHand();
 	}
 	//set date
 	else{
 	Setdate();
 	clearInput();
+	 comHand();
 	}
 }
 //if 2 is  is stored into the userInput at location 0
@@ -138,6 +149,7 @@ else if(userInput[0]=='2'){
 if(userInput[1]=='0'){
 resumeAll();
 	clearInput();
+	 comHand();
 	
 	}
 	else if(userInput[1]=='1'){
@@ -146,6 +158,7 @@ resumeAll();
 else{
 	setTime();
 	clearInput();
+	 comHand();
 
 }
 }
@@ -154,6 +167,7 @@ else{
 else if(userInput[0]=='3'){
 	getDate();
 	clearInput();
+	 comHand();
 	
 }
 //if 4 is stored into the userInput at location 0
@@ -161,6 +175,7 @@ else if(userInput[0]=='3'){
 else if(userInput[0]=='4'){
 	getTime();
 	clearInput();
+	 comHand();
 	
 }
 //if 5 is stored into the userInput at location 0
@@ -168,6 +183,7 @@ else if(userInput[0]=='4'){
 else if(userInput[0]=='5'){
 	Version();
 	clearInput();
+	 comHand();
 	
 }
 //if 6 is stored into the userInput at location 0
@@ -201,6 +217,7 @@ else if(userInput[0]=='7'){
 	sys_req(READ,DEFAULT_DEVICE,userInput,&countPtr);
 	Suspend(userInput);
 	clearInput();
+	 comHand();
 	
 }
 //if 8 is stored into the userInput at location 0
@@ -211,6 +228,7 @@ else if(userInput[0]=='8'){
 	sys_req(READ,DEFAULT_DEVICE,userInput,&countPtr);
 	Resume(userInput);
 	clearInput();
+	 comHand();
 	
 }
 //if 9 is stored into the userInput at location 0

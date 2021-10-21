@@ -205,6 +205,8 @@ u32int * sys_call(context* registers){
 	}
 	else if(params.op_code == IDLE){
 	COP->stackHead = (unsigned char*) registers;
+	strcpy(COP->state,"Ready");
+	addToReadyQueue(COP);
 	
 	}
 	else if(params.op_code == EXIT){
