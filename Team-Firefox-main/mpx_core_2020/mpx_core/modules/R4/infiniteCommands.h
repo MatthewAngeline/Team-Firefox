@@ -5,7 +5,7 @@ void foreverIdle();
 void checkAlarm();
 
 void setAlarm();
-void removealarm(char name[]);
+void removealarm();
 
 typedef struct alarm{
 	char name[10];

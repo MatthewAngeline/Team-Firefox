@@ -228,11 +228,17 @@ pcb * createPCB(char name[], int pcbClass,int priority,char status[]){
 
 void deletePCB(char name[]){
 	//locates the PCB and removes it from the queue then frees the memory allocated to that PCB.
+	
 	pcb* temp = findPCB(name);
+	
 	if(temp == NULL){
 		sys_req(WRITE,DEFAULT_DEVICE,WRONGNAME,&nameCountPtr);
 	}
 	else{
+		if(strcmp(name,"ComHandle")==0 || strcmp(name,"AlarmAlarm") ==0 || strcmp(name,"ForeverIdle")==0){
+			sys_req(WRITE,DEFAULT_DEVICE,"Cannot delete this process as it is a system process\n",&nameCountPtr);
+			return;
+		}
 		removeFromQueue(temp);
 		freePCB(temp);
 	}

@@ -17,11 +17,11 @@ int bufferTrack=0;
 char userInput[100];
 char time[10];
 char date[10];
-char MENU[]={"\nFirefox MPX\n0: help \n1: Set Date \n2: Set Time \n3: Display Date \n4: Display Time\n5: Version\n6: Shut Down \n7: Suspend \n8: Resume \n9: Set Priority \n10: Show PCB \n11: Show All \n12: Show Ready\n13: Show Block \n14: Create PCB \n15: Delete PCB \n16: Block \n17: Unblock \n18: Set Alarm \n19: LoadR3 \n20: Resume All\n\nPlease enter your choice, one option at a time, entering only the number corresponding with the option:\n"};
+char MENU[]={"\nFirefox MPX\n0: help \n1: Set Date \n2: Set Time \n3: Display Date \n4: Display Time\n5: Version\n6: Shut Down \n7: Suspend \n8: Resume \n9: Set Priority \n10: Show PCB \n11: Show All \n12: Show Ready\n13: Show Block \n14: Create PCB \n15: Delete PCB \n16: Block \n17: Unblock \n18: Set Alarm \n19: LoadR3 \n20: Resume All\n21: Remove Alarm\nPlease enter your choice, one option at a time, entering only the number corresponding with the option:\n"};
 char WRONGFORMAT[]={"Please insert the correct format\n"};
 char CONFIRMATION[]={"Enter y + enter to shutdown press n + enter to go back to menu:\n"}; 
-char VERSION[]={"3.0 \nCompletion Date:9/30/21\n"};
-char HELP[]={};
+char VERSION[]={"4.0 \nCompletion Date:10/21/21\n"};
+
 
 
 
@@ -41,7 +41,8 @@ bufferTrack=countPtr;
 while(!quit){
 //if 0 is stored into the userInput at location 0
 if(userInput[0] == '0'){
-Help();
+sys_req(WRITE,DEFAULT_DEVICE, "Option 1: Set Date. \n\t Allows the user to set the Date should the listed date be incorrect.\nOption 2: Set Time. \n\t Allows the user to set the Time should the listed date be incorrect.\nOption 3: Display Date. \n\t Prints the date that is set to the screen.\nOption 4: Display Time. \n\t Prints the time that is set to the screen.\nOption 5: Version. \n\t Prints the currect Version of the project to the screen.\nOption 6: Shut Down. \n\t Begins the shutdown protocol for the system.\nOption 7: Suspend \n\t Sets a user given process to Suspended \nOption 8: Resume \n\t Sets a user given process to Not Suspended \nOption 9: Set Priority\n\t Changes priority of a user given process \nOption 10: Show PCB \n\t Shows the PCB of a user given process \nOption 11: Show All \n\t Shows all PCBs \nOption 12: Show Ready \n\t Shows all PCBs within the ready queue \nOption 13: Show Blocked \n\t Shows all PCBs within the blocked queue \nOption 14: Create PCB \n\t Creates a PCB when the user gives the PCB name, the class, and the priority \nOption 15: Delete PCB \n\t Deletes a user given PCB \nOption 16: Block \n\t Changes a user given process state to blocked and moves PCB to blocked queue \nOption 17: Unblock \n\t Changes a user given process state to ready and moves PCB to ready queue\nOption 18: Set Alarm \n\t Allows the use create an alarm that will display a message when the time entered is reached.\nOption 19: LoadR3\n\t Loads in processes given in R3\nOption 20: Resume All\n\t Sets all processes to Not Suspended\nOption 21: Remove Alarm\n\t Cancels an alarm that has the same name that the user inputs",&countPtr);
+
 clearInput();
 }
 //if 1 is stored into the userInput at location 0
@@ -143,7 +144,7 @@ resumeAll();
 	
 	}
 	else if(userInput[1]=='1'){
-	
+	removealarm();
 }
 else{
 	setTime();
@@ -240,7 +241,7 @@ else if(userInput[0]=='9'){
 else{
 comHand();
 }
-yield();
+sys_req(IDLE, DEFAULT_DEVICE, NULL, NULL);
 }
 
 return 0;
@@ -368,6 +369,7 @@ void getDate(){
 	sys_req(WRITE,DEFAULT_DEVICE,day_Ptr,&menuCountPtr);
 	sys_req(WRITE,DEFAULT_DEVICE,"/",&menuCountPtr);
 	sys_req(WRITE,DEFAULT_DEVICE,yr_Ptr,&menuCountPtr);
+	sys_req(WRITE,DEFAULT_DEVICE,"\n",&menuCountPtr);
 
 }
 //allows the user to set the time that they would like their system to read. 1-12 unless military time then 1-24 should be the hours and 1-59 for minutes and seconds. 
