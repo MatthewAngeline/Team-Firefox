@@ -13,6 +13,7 @@ void yield(){
 	asm volatile ("int $60");
 }
 
+// loads the processes into memory in the suspended ready state.
 pcb* loadr3(){
 	int i = 1;
 	char* procName[5]={"TestName1","TestName2","TestName3","TestName4","TestName5"};
