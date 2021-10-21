@@ -17,7 +17,7 @@ char message[30];
 	memset( message, '\0', sizeof(message));
 	strcpy(message, "IDLE Forever Executing.\n");
 	count = strlen(message);
-  
+  //loops forever to idle
   while(1){
  	 
 	sys_req( WRITE, DEFAULT_DEVICE, message, &count);
@@ -27,8 +27,9 @@ char message[30];
 }
 
 void checkAlarm(){
-	//klogv("Checking Alarm");
+	//loops forever
 	while(1){
+	//gets current time
 	outb(0x70, 0x04);
 	unsigned char Bhrs = inb(0x71);
 	//converts it to decimal 
@@ -40,6 +41,7 @@ void checkAlarm(){
 	int min = BCDToDec(Bmin);
 	//stores seconds from 0x00
 	outb(0x70, 0x00);
+	//commented out functionality for seconds to avoid unused variable error
 	//unsigned char Bsec = inb(0x71);
 	//converts it to decimal
 	//int sec = BCDToDec(Bsec);
@@ -48,13 +50,14 @@ void checkAlarm(){
 	int i = 0;
 	sys_req(WRITE, DEFAULT_DEVICE, "checking alarms\n", &count);
 	while(i < 30){
-	
-		if(ref != NULL && hrs == ref->hour && min == ref->mins ){//&& sec == ref->secs
+		//if the alarm exists and the time matches
+		if(ref != NULL && hrs == ref->hour && min == ref->mins ){//&& sec == ref->secs //removed to prevent missing alarm by seconds
+			//gets the message from the alarm and prints it out
 			char mess[30];
 			strcpy(mess,ref->message);
 			sys_req( WRITE, DEFAULT_DEVICE, mess, &count);
 			sys_req( WRITE, DEFAULT_DEVICE, "\n", &count);
-			//sys_req( WRITE, DEFAULT_DEVICE, "detected alarm", &count);
+			//removes alarm and frees its memory
 			alarmList[i] = NULL;
 			sys_free_mem(ref); 
 		}
@@ -63,7 +66,7 @@ void checkAlarm(){
 		
 		
 	}
-	//klogv("endAlarm");
+		//idles to switch processes
 	sys_req(IDLE, DEFAULT_DEVICE, NULL, NULL);
 }
 }
@@ -71,7 +74,7 @@ void checkAlarm(){
 void setAlarm(){
 	alarm* new = sys_alloc_mem(sizeof(alarm));
 	int valid = 0;
-	
+	//gets input and ensures that it is a valid time
 	while(!valid) {
 	sys_req(WRITE,DEFAULT_DEVICE,"Name:",&count);
 	sys_req(READ,DEFAULT_DEVICE,userInput,&count);
@@ -103,7 +106,9 @@ void setAlarm(){
 	
 	alarm* temp = alarmList[0];
 	int i = 0;
+	//finds first abailable location
 	while (i<30){
+		//at first available location adds the alarm and breaks the loop to prevent multiple entries
 		if(temp == NULL){
 			alarmList[i] = new;
 			break;
@@ -114,6 +119,7 @@ void setAlarm(){
 			
 		}
 	}
+	//if it reached the end of the array prints error
 	if (i >= 30){
 		sys_req( WRITE, DEFAULT_DEVICE, "This alarm is not added because the alarm list is full", &count);
 	}
@@ -125,8 +131,9 @@ clearInput();
 sys_req(READ, DEFAULT_DEVICE, userInput, &count);
 alarm* ref = alarmList[0];
 int i = 0;
+	//traverses array
 while (i<30){
-
+	//checks for matching name
 	if (strcmp(ref->name,userInput)==0){
 		alarmList[i] = NULL;
 		sys_free_mem(ref); 
