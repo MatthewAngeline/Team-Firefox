@@ -2,24 +2,24 @@
 #define _HEAPMANAGER_H
 
 #include "../mpx_supt.h"
-typedef struct cmbc{
+typedef struct cmcb{
 	//type 1 is alloc, 0 is free
 	int type;
 	u32int address;
 	//size in bytes
 	u32int size;
 	char name[50];
-	struct cmbc* nextCMBC;
-	struct cmbc* prevCMBC;
-}cmbc;
+	struct cmcb* nextCMCB;
+	struct cmcb* prevCMCB;
+}cmcb;
 
-
-
+cmcb* placeInList(cmcb* head, cmcb* toAdd)
+cmcb* findCMCB(u32int addr);
 void intializeHeap(int size);
 
 u32int allocateMemory(int size);
 
-u32int freeMemory(cmbc* mem);
+u32int freeMemory(u32int addr);
 
 int isEmpty();
 
