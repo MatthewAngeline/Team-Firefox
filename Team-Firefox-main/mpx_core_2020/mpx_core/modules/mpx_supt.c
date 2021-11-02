@@ -200,7 +200,7 @@ void idle()
 
 u32int * sys_call(context* registers){
 	//klogv("syscall");
-	pcb* toQueue;
+	pcb* toQueue = NULL;
 	
 	queue* readyQueue = getReadyQueue();
 	if(COP == NULL){

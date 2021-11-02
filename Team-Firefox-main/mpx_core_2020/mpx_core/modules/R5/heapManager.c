@@ -6,10 +6,11 @@
 int beginMem;
 cmcb* beginFree;
 cmcb* beginAlloc;
-int count = 100;
+
 
 void intializeHeap(int size){
 	beginMem = kmalloc(size+sizeof(struct cmcb));
+	beginFree = (cmcb*) beginMem;
 	beginFree->address = beginMem + sizeof(struct cmcb);
 	beginFree->size = size;
 	beginFree->type = 0;
@@ -18,18 +19,26 @@ void intializeHeap(int size){
 }
 //need to find out how to alloc (sysallocmem?)
 u32int allocateMemory(int size){
+	int count = 100;
 	cmcb* locator = beginFree;
 	int sential = 1;
 	do{
-	if(beginFree->size <= (u32int)size){
-	
-	
+	if(locator->size >= (u32int)size){
+		cmcb* newFree = (cmcb*) locator->address + (u32int)size + sizeof(struct cmcb);
+		newFree->size = locator->size - (u32int) size;
+		locator->size = (u32int) size;
+		newFree->address = locator->address + (u32int)size + sizeof(struct cmcb);
+		newFree->type = 0;
+		placeInList(beginFree, newFree);
+		
 		locator->type=1;
+		sential = 0;
 	}
 	else{
 		if(locator->nextCMCB == NULL) {
 			sys_req(WRITE,DEFAULT_DEVICE,"No available CMCB's, could not allocate.\n",&count);
 			return 0;
+			}
 		else locator = locator->nextCMCB;
 	}
 	} while(sential);
@@ -72,20 +81,32 @@ int isEmpty(){
 
 //print u32int?
 void showFreeMemory(){
+	int count = 100;
+	
 	cmcb* block = beginFree;
 	while(block!=NULL){
-		//char sentence[200];
-		//strcpy(block->address,sentence);
+		char sentence[200];
+		itoa((int)block->address, sentence);
+		sys_req(WRITE,DEFAULT_DEVICE,sentence,&count);
+		sys_req(WRITE,DEFAULT_DEVICE,"\nsize: ",&count);
+		itoa((int)block->size, sentence);
+		sys_req(WRITE,DEFAULT_DEVICE,sentence,&count);
 		block=block->nextCMCB;
 	}
 	
 }
 //print u32int?
 void showAllocatedMemory(){
+	int count = 100;
+	
 	cmcb* block = beginAlloc;
 	while(block!=NULL){
-		//char sentence[200];
-		//strcpy(block->address,sentence);
+		char sentence[200];
+		itoa((int)block->address, sentence);
+		sys_req(WRITE,DEFAULT_DEVICE,sentence,&count);
+		sys_req(WRITE,DEFAULT_DEVICE,"\nsize: ",&count);
+		itoa((int)block->size, sentence);
+		sys_req(WRITE,DEFAULT_DEVICE,sentence,&count);
 		block=block->nextCMCB;
 	}
 	
@@ -96,11 +117,11 @@ cmcb* placeInList(cmcb* head, cmcb* toAdd){
 	if(toAdd->prevCMCB != NULL) toAdd->prevCMCB->nextCMCB = toAdd->nextCMCB;
 	if(toAdd->nextCMCB != NULL) toAdd->nextCMCB->prevCMCB = toAdd->prevCMCB;
 	//add to head's lists
-	cbcb* locator = head;
+	cmcb* locator = head;
 	while(locator != NULL){
 		if(toAdd->address < locator->address){
 			toAdd->nextCMCB = locator;
-			toAdd->prevCMCB = locator->precCMCB;
+			toAdd->prevCMCB = locator->prevCMCB;
 			if(locator->prevCMCB != NULL) locator->prevCMCB->nextCMCB = toAdd;
 			locator->prevCMCB = toAdd;
 			return toAdd;

@@ -7,10 +7,11 @@
 #include "../R2/userCommands.h"
 #include "../R3/userCommandsR3.h"
 #include "../R4/infiniteCommands.h"
+#include "../R5/heapManager.h"
 
 
-int countPtr;
-int menuCountPtr=99;
+int countPtr = 100;
+int menuCountPtr=150;
 int quit=0;
 int bufferTrack=0;
 
@@ -27,10 +28,6 @@ char VERSION[]={"4.0 \nCompletion Date:10/21/21\n"};
 
 //main file to run all the applications and used to create the menu driven logic.
 int comHand(){
-
-menuCountPtr=80;
-
-menuCountPtr=70;
 //prints menu
 sys_req(WRITE,DEFAULT_DEVICE,MENU,&menuCountPtr);
 memset(userInput, '\0', 100);
@@ -145,6 +142,36 @@ resumeAll();
 	}
 	else if(userInput[1]=='1'){
 	removealarm();
+}
+	else if(userInput[1]=='2'){ // initialize heap
+	sys_req(WRITE,DEFAULT_DEVICE,"Enter heap size\n",&menuCountPtr);
+	clearInput();
+	sys_req(READ,DEFAULT_DEVICE,userInput,&countPtr);
+	int size = atoi(userInput);
+	intializeHeap(size);
+}	
+	else if(userInput[1]=='3'){ // allocate mem
+	sys_req(WRITE,DEFAULT_DEVICE,"Enter size to be allocated\n",&menuCountPtr);
+	clearInput();
+	sys_req(READ,DEFAULT_DEVICE,userInput,&countPtr);
+	int size = atoi(userInput);
+	allocateMemory((u32int) size);
+}
+	else if(userInput[1]=='4'){ // free mem
+	sys_req(WRITE,DEFAULT_DEVICE,"Enter process address\n",&menuCountPtr);
+	clearInput();
+	sys_req(READ,DEFAULT_DEVICE,userInput,&countPtr);
+	int add = atoi(userInput);
+	freeMemory((u32int) add);
+}
+	else if(userInput[1]=='5'){ //is empty
+	isEmpty();
+}
+	else if(userInput[1]=='6'){ // show free mem
+	showFreeMemory();
+}
+	else if(userInput[1]=='7'){ // show allo mem
+	showAllocatedMemory();
 }
 else{
 	setTime();
