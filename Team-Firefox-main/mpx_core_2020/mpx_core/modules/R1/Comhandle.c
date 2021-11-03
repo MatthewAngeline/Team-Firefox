@@ -155,7 +155,7 @@ resumeAll();
 	clearInput();
 	sys_req(READ,DEFAULT_DEVICE,userInput,&countPtr);
 	int size = atoi(userInput);
-	allocateMemory((u32int) size);
+	allocateMemory(size);
 }
 	else if(userInput[1]=='4'){ // free mem
 	sys_req(WRITE,DEFAULT_DEVICE,"Enter process address\n",&menuCountPtr);

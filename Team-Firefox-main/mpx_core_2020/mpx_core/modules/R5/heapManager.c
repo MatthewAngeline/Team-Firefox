@@ -11,27 +11,27 @@ cmcb* beginAlloc;
 void intializeHeap(int size){
 	beginMem = kmalloc(size+sizeof(struct cmcb));
 	beginFree = (cmcb*) beginMem;
+	beginAlloc = NULL;
 	beginFree->address = beginMem + sizeof(struct cmcb);
 	beginFree->size = size;
 	beginFree->type = 0;
 	beginFree->nextCMCB = NULL;
 	beginFree->prevCMCB = NULL;
 }
-//need to find out how to alloc (sysallocmem?)
+
 u32int allocateMemory(int size){
 	int count = 100;
 	cmcb* locator = beginFree;
 	int sential = 1;
 	do{
 	if(locator->size >= (u32int)size){
-		cmcb* newFree = (cmcb*) locator->address + (u32int)size + sizeof(struct cmcb);
-		newFree->size = locator->size - (u32int) size;
-		locator->size = (u32int) size;
+		cmcb* newFree = (cmcb*) (locator->address + (u32int)size);
 		newFree->address = locator->address + (u32int)size + sizeof(struct cmcb);
-		newFree->type = 0;
-		placeInList(beginFree, newFree);
-		
+		newFree->size = locator->size - (u32int) size - sizeof(struct cmcb);
+		locator->size = (u32int) size;
+		newFree->type=0;
 		locator->type=1;
+		placeInList(beginFree, newFree);
 		sential = 0;
 	}
 	else{
@@ -43,6 +43,13 @@ u32int allocateMemory(int size){
 	}
 	} while(sential);
 	placeInList(beginAlloc, locator);
+	
+	/*char sentence[100];
+	itoa(beginFree->address, sentence);
+	sys_req(WRITE,DEFAULT_DEVICE,sentence,&count);
+	itoa(beginAlloc->address, sentence);
+	sys_req(WRITE,DEFAULT_DEVICE,"\n",&count);
+	sys_req(WRITE,DEFAULT_DEVICE,sentence,&count);*/
 	
 	return locator->address;
 }
@@ -82,8 +89,8 @@ int isEmpty(){
 //print u32int?
 void showFreeMemory(){
 	int count = 100;
-	
 	cmcb* block = beginFree;
+	
 	while(block!=NULL){
 		char sentence[200];
 		itoa((int)block->address, sentence);
@@ -98,8 +105,8 @@ void showFreeMemory(){
 //print u32int?
 void showAllocatedMemory(){
 	int count = 100;
-	
 	cmcb* block = beginAlloc;
+	
 	while(block!=NULL){
 		char sentence[200];
 		itoa((int)block->address, sentence);
@@ -113,28 +120,48 @@ void showAllocatedMemory(){
 }
 
 cmcb* placeInList(cmcb* head, cmcb* toAdd){
-	//organize other list for remove
-	if(toAdd->prevCMCB != NULL) toAdd->prevCMCB->nextCMCB = toAdd->nextCMCB;
-	if(toAdd->nextCMCB != NULL) toAdd->nextCMCB->prevCMCB = toAdd->prevCMCB;
-	//add to head's lists
-	cmcb* locator = head;
-	while(locator != NULL){
-		if(toAdd->address < locator->address){
-			toAdd->nextCMCB = locator;
-			toAdd->prevCMCB = locator->prevCMCB;
-			if(locator->prevCMCB != NULL) locator->prevCMCB->nextCMCB = toAdd;
-			locator->prevCMCB = toAdd;
-			return toAdd;
+	// if list is empty
+	cmcb* locator;
+	if(head == beginFree) locator = beginFree;
+	else locator = beginAlloc;
+	if(locator == NULL) {
+		toAdd->prevCMCB = NULL;
+		
+		toAdd->nextCMCB = NULL;
+		if(head == beginFree) {
+		beginFree = toAdd;
 		}
-		if(locator->nextCMCB==NULL){
-			locator->nextCMCB=toAdd;
-			toAdd->prevCMCB = locator;
-			toAdd->nextCMCB = NULL;
-			return toAdd;
+		else {
+		beginAlloc = toAdd;
 		}
 		
+		/*locator = toAdd;
+		locator->prevCMCB = NULL;
+		locator->nextCMCB = NULL;*/
 	}
-	
-	return NULL;
+	else {
+		//organize other list for remove
+		if(toAdd->prevCMCB != NULL) toAdd->prevCMCB->nextCMCB = toAdd->nextCMCB;
+		if(toAdd->nextCMCB != NULL) toAdd->nextCMCB->prevCMCB = toAdd->prevCMCB;
+		//add to head's lists
+		
+		while(locator != NULL){
+			if(toAdd->address < locator->address){
+				toAdd->nextCMCB = locator;
+				toAdd->prevCMCB = locator->prevCMCB;
+				if(locator->prevCMCB != NULL) locator->prevCMCB->nextCMCB = toAdd;
+				locator->prevCMCB = toAdd;
+				break;
+			}
+			if(locator->nextCMCB==NULL){
+				locator->nextCMCB=toAdd;
+				toAdd->prevCMCB = locator;
+				toAdd->nextCMCB = NULL;
+				break;
+			}
+			
+		}
+	}
+	return toAdd;
 }
 
