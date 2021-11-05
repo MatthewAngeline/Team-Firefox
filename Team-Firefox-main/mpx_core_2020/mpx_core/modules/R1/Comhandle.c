@@ -165,7 +165,8 @@ resumeAll();
 	freeMemory((u32int) add);
 }
 	else if(userInput[1]=='5'){ //is empty
-	isEmpty();
+	if (isEmpty()) sys_req(WRITE,DEFAULT_DEVICE,"Heap is empty\n",&menuCountPtr);
+	else sys_req(WRITE,DEFAULT_DEVICE,"Heap is not empty\n",&menuCountPtr);
 }
 	else if(userInput[1]=='6'){ // show free mem
 	showFreeMemory();
