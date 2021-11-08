@@ -9,6 +9,7 @@ cmcb* beginAlloc;
 char sentence[20];
 
 
+
 void intializeHeap(int size){
 	beginMem = kmalloc(size+sizeof(struct cmcb));
 	beginFree = (cmcb*) beginMem;
@@ -27,13 +28,13 @@ u32int allocateMemory(int size){
 	do{
 	if(locator->size >= (u32int)size){
 		cmcb* newFree = (cmcb*) (locator->address + (u32int)size);
-		newFree->address = locator->address + locator->size + sizeof(struct cmcb);
+		newFree->address = locator->address + (u32int)size + (u32int)sizeof(struct cmcb);
 		newFree->size = locator->size - (u32int) size - sizeof(struct cmcb);
 		locator->size = (u32int) size;
 		newFree->type=0;
 		locator->type=1;
-		placeInList(beginAlloc, locator);
-		placeInList(beginFree, newFree);
+		placeInAllocList(locator);
+		placeInFreeList(newFree);
 		sential = 0;
 	}
 	else{
@@ -73,11 +74,15 @@ cmcb* findCMCB(u32int addr){
 
 //still need to find out how to free mem (sysfreemem?)
 u32int freeMemory(u32int addr){
+	int count = 100;
 	cmcb* block = findCMCB(addr);
-	
+	if(block == NULL){
+	sys_req(WRITE,DEFAULT_DEVICE,"This address does not exsist, try a different address",&count);
+	return NULL;
+	}
 	block->type = 0;
 	
-	placeInList(beginFree, block);
+	placeInFreeList(block);
 	return 0;
 	
 }
@@ -119,29 +124,19 @@ void showAllocatedMemory(){
 	}
 	
 }
-
-cmcb* placeInList(cmcb* head, cmcb* toAdd){
-	// if list is empty
-	cmcb* locator;
-	if(head == beginFree) {
-		locator = beginFree;
-	}
-	else {
-		locator = beginAlloc;
-	 }
-	if(locator == NULL) {
+cmcb* placeInFreeList(cmcb* toAdd){
+	cmcb* locator = beginFree;
+	if(locator == NULL){
+	
+		if(toAdd->prevCMCB != NULL) toAdd->prevCMCB->nextCMCB = toAdd->nextCMCB;
+		if(toAdd->nextCMCB != NULL) toAdd->nextCMCB->prevCMCB = toAdd->prevCMCB;
+		
 		toAdd->prevCMCB = NULL;
 		toAdd->nextCMCB = NULL;
-		if(head == beginFree) {
-			beginFree = toAdd;
-		}
-		else {
-			beginFree = NULL;
-			beginAlloc = toAdd;
-		}
+		beginFree = toAdd;
+		return beginFree;
 	}
-	else {
-		//organize other list for remove
+	else{
 		if(toAdd->prevCMCB != NULL) toAdd->prevCMCB->nextCMCB = toAdd->nextCMCB;
 		if(toAdd->nextCMCB != NULL) toAdd->nextCMCB->prevCMCB = toAdd->prevCMCB;
 		//add to head's lists
@@ -160,9 +155,81 @@ cmcb* placeInList(cmcb* head, cmcb* toAdd){
 				toAdd->nextCMCB = NULL;
 				break;
 			}
-			
+			else{
+			locator = locator->nextCMCB;
+			}
+		}
+		merge(toAdd);
+		if(beginFree-> address < toAdd->address){
+		beginFree = toAdd;
+		}
+		
+		return locator;
+	}
+
+}
+void merge(cmcb* free){
+
+	if(free->prevCMCB->address + free->prevCMCB->size + (u32int)sizeof(struct cmcb) == free->address){
+	free->size = free->size + free->prevCMCB->size;
+	free->prevCMCB->nextCMCB = free->nextCMCB; 
+	free = free->prevCMCB;
+	
+	}
+	if(free->address + free->size +(u32int)sizeof(struct cmcb) == free->nextCMCB->address){
+	free->size = free->size+free->nextCMCB->size;
+	free->nextCMCB = free->nextCMCB->nextCMCB;
+	
+	}
+
+}
+cmcb* placeInAllocList(cmcb* toAdd){
+	cmcb* locator = beginAlloc;
+	if(locator == NULL){
+	
+		if(toAdd->prevCMCB != NULL) toAdd->prevCMCB->nextCMCB = toAdd->nextCMCB;
+		if(toAdd->nextCMCB != NULL) toAdd->nextCMCB->prevCMCB = toAdd->prevCMCB;
+		
+		toAdd->prevCMCB = NULL;
+		toAdd->nextCMCB = NULL;
+		beginAlloc = toAdd;
+		
+		beginFree = NULL;
+		return beginAlloc;
+	}
+	else{
+		if(toAdd->prevCMCB != NULL) toAdd->prevCMCB->nextCMCB = toAdd->nextCMCB;
+		if(toAdd->nextCMCB != NULL) toAdd->nextCMCB->prevCMCB = toAdd->prevCMCB;
+		//add to head's lists
+		//cmcb* locator = head;
+		while(locator != NULL){
+			if(toAdd->address < locator->address){
+				toAdd->nextCMCB = locator;
+				toAdd->prevCMCB = locator->prevCMCB;
+				if(locator->prevCMCB != NULL) locator->prevCMCB->nextCMCB = toAdd;
+				locator->prevCMCB = toAdd;
+				break;
+			}
+			if(locator->nextCMCB==NULL){
+				locator->nextCMCB=toAdd;
+				toAdd->prevCMCB = locator;
+				toAdd->nextCMCB = NULL;
+				break;
+			}
+			else{
+			locator = locator->nextCMCB;
+			}
+		}
+		
+	}
+	if(beginFree -> address == toAdd -> address){
+		if(beginFree -> nextCMCB != NULL){
+			beginFree = beginFree->nextCMCB;
+		}
+		else{
+		beginFree = NULL;
 		}
 	}
-	return toAdd;
+return locator;
 }
 

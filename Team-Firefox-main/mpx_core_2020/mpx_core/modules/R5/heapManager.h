@@ -13,7 +13,9 @@ typedef struct cmcb{
 	struct cmcb* prevCMCB;
 }cmcb;
 
-cmcb* placeInList(cmcb* head, cmcb* toAdd);
+void merge(cmcb* free);
+cmcb* placeInFreeList(cmcb* toAdd);
+cmcb* placeInAllocList(cmcb* toAdd);
 cmcb* findCMCB(u32int addr);
 void intializeHeap(int size);
 

@@ -6,7 +6,6 @@
 #include <../include/core/io.h>
 
 char userInput[100];
-
 alarm* alarmList[30];
 int count = 100;
 
