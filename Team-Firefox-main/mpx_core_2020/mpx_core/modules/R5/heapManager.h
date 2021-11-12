@@ -12,16 +12,16 @@ typedef struct cmcb{
 	struct cmcb* nextCMCB;
 	struct cmcb* prevCMCB;
 }cmcb;
-
-void merge(cmcb* free);
+cmcb* getAlloc();
+cmcb* merge(cmcb* free);
 cmcb* placeInFreeList(cmcb* toAdd);
 cmcb* placeInAllocList(cmcb* toAdd);
 cmcb* findCMCB(u32int addr);
 void intializeHeap(int size);
 
-u32int allocateMemory(int size);
+u32int allocateMemory(u32int size);
 
-u32int freeMemory(u32int addr);
+int freeMemory(void* addr);
 
 int isEmpty();
 

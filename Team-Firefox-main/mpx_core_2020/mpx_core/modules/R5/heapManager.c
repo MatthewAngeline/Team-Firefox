@@ -8,7 +8,9 @@ cmcb* beginFree;
 cmcb* beginAlloc;
 char sentence[20];
 
-
+cmcb* getAlloc(){
+return beginAlloc;
+}
 
 void intializeHeap(int size){
 	beginMem = kmalloc(size+sizeof(struct cmcb));
@@ -19,14 +21,18 @@ void intializeHeap(int size){
 	beginFree->type = 0;
 	beginFree->nextCMCB = NULL;
 	beginFree->prevCMCB = NULL;
+	
+	
+	
 }
 
-u32int allocateMemory(int size){
+u32int allocateMemory(u32int size){
 	int count = 100;
 	cmcb* locator = beginFree;
 	int sential = 1;
 	do{
 	if(locator->size >= (u32int)size){
+	if(locator->nextCMCB == NULL){
 		cmcb* newFree = (cmcb*) (locator->address + (u32int)size);
 		newFree->address = locator->address + (u32int)size + (u32int)sizeof(struct cmcb);
 		newFree->size = locator->size - (u32int) size - sizeof(struct cmcb);
@@ -35,6 +41,13 @@ u32int allocateMemory(int size){
 		locator->type=1;
 		placeInAllocList(locator);
 		placeInFreeList(newFree);
+		}
+		else{
+			locator->type = 0;
+			locator->prevCMCB->nextCMCB = locator->nextCMCB;
+			locator->nextCMCB->prevCMCB = locator->prevCMCB;
+			placeInAllocList(locator);
+		}
 		sential = 0;
 	}
 	else{
@@ -73,9 +86,9 @@ cmcb* findCMCB(u32int addr){
 }
 
 //still need to find out how to free mem (sysfreemem?)
-u32int freeMemory(u32int addr){
+int freeMemory(void* addr){
 	int count = 100;
-	cmcb* block = findCMCB(addr);
+	cmcb* block = findCMCB((u32int)addr);
 	if(block == NULL){
 	sys_req(WRITE,DEFAULT_DEVICE,"This address does not exsist, try a different address",&count);
 	return NULL;
@@ -141,6 +154,15 @@ cmcb* placeInFreeList(cmcb* toAdd){
 		if(toAdd->nextCMCB != NULL) toAdd->nextCMCB->prevCMCB = toAdd->prevCMCB;
 		//add to head's lists
 		//cmcb* locator = head;
+		if(toAdd->prevCMCB == NULL){
+			if(toAdd->nextCMCB == NULL){
+				beginAlloc = NULL;
+				
+			}
+			else{
+				beginAlloc = toAdd->nextCMCB;
+			}
+		}
 		while(locator != NULL){
 			if(toAdd->address < locator->address){
 				toAdd->nextCMCB = locator;
@@ -159,8 +181,8 @@ cmcb* placeInFreeList(cmcb* toAdd){
 			locator = locator->nextCMCB;
 			}
 		}
-		merge(toAdd);
-		if(beginFree-> address < toAdd->address){
+		toAdd = merge(toAdd);
+		if(beginFree-> address >= toAdd->address){
 		beginFree = toAdd;
 		}
 		
@@ -168,19 +190,32 @@ cmcb* placeInFreeList(cmcb* toAdd){
 	}
 
 }
-void merge(cmcb* free){
-
-	if(free->prevCMCB->address + free->prevCMCB->size + (u32int)sizeof(struct cmcb) == free->address){
-	free->size = free->size + free->prevCMCB->size;
-	free->prevCMCB->nextCMCB = free->nextCMCB; 
-	free = free->prevCMCB;
+cmcb* merge(cmcb* free){
 	
+	if(free->nextCMCB != NULL){
+		if(free->address + free->size +(u32int)sizeof(struct cmcb) == free->nextCMCB->address){
+		free->size = free->size+free->nextCMCB->size+(u32int)sizeof(struct cmcb);
+		if(free->nextCMCB->nextCMCB != NULL){
+			free->nextCMCB->nextCMCB->prevCMCB = free;
+		}
+		free->nextCMCB = free->nextCMCB->nextCMCB;
 	}
-	if(free->address + free->size +(u32int)sizeof(struct cmcb) == free->nextCMCB->address){
-	free->size = free->size+free->nextCMCB->size;
-	free->nextCMCB = free->nextCMCB->nextCMCB;
+	 
+	 
+	}
+	if(free->prevCMCB != NULL){
+		free = free->prevCMCB;
+		if(free->address + free->size +(u32int)sizeof(struct cmcb) == free->nextCMCB->address){
+		free->size = free->size+free->nextCMCB->size+(u32int)sizeof(struct cmcb);
+		if(free->nextCMCB->nextCMCB != NULL){
+			free->nextCMCB->nextCMCB->prevCMCB = free;
+		}
+		free->nextCMCB = free->nextCMCB->nextCMCB;
+	}
+	 
 	
-	}
+}
+return free;
 
 }
 cmcb* placeInAllocList(cmcb* toAdd){
@@ -202,6 +237,14 @@ cmcb* placeInAllocList(cmcb* toAdd){
 		if(toAdd->nextCMCB != NULL) toAdd->nextCMCB->prevCMCB = toAdd->prevCMCB;
 		//add to head's lists
 		//cmcb* locator = head;
+		if(beginFree -> address == toAdd -> address){
+		if(beginFree -> nextCMCB != NULL){
+			beginFree = beginFree->nextCMCB;
+		}
+		else{
+		beginFree = NULL;
+		}
+	}
 		while(locator != NULL){
 			if(toAdd->address < locator->address){
 				toAdd->nextCMCB = locator;
@@ -222,14 +265,7 @@ cmcb* placeInAllocList(cmcb* toAdd){
 		}
 		
 	}
-	if(beginFree -> address == toAdd -> address){
-		if(beginFree -> nextCMCB != NULL){
-			beginFree = beginFree->nextCMCB;
-		}
-		else{
-		beginFree = NULL;
-		}
-	}
+	
 return locator;
 }
 

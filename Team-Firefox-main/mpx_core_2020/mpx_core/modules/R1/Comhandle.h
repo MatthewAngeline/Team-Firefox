@@ -1,7 +1,7 @@
 #ifndef _COMHANDLE_H
 #define _COMHANDLE_H
 
-
+int getGlobal();
 
 int comHand();
 
@@ -15,9 +15,8 @@ void getTime();
 
 void Version();
 
-void Help();
 
-void clearInput();
+void clearInput(char userInput[]);
 
 unsigned int decToBCD(int num);
 

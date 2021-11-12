@@ -23,6 +23,7 @@ void Suspend(char name[]);
 void Resume(char name[]);
 void resumeAll();
 void setPriority(char name[],int PCBpriority);
+void deleteAllPCB(char name[]);
 
 
 

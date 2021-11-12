@@ -10,16 +10,11 @@ alarm* alarmList[30];
 int count = 100;
 
 void foreverIdle() {
-char message[30];
-  int count=0;
-	
-	memset( message, '\0', sizeof(message));
-	strcpy(message, "IDLE Forever Executing.\n");
-	count = strlen(message);
+
   //loops forever to idle
   while(1){
  	 
-	sys_req( WRITE, DEFAULT_DEVICE, message, &count);
+	sys_req( WRITE, DEFAULT_DEVICE, "IDLE FOREVER EXECUTING\n", &count);
 	sys_req(IDLE, DEFAULT_DEVICE, NULL, NULL);
 	}
   

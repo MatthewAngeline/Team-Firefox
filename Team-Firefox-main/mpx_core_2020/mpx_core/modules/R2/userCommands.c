@@ -297,5 +297,18 @@ pcb* temp = findPCB(name);
 
 
 }
+void deleteAllPCB(char name[]){
+	//locates the PCB and removes it from the queue then frees the memory allocated to that PCB.
+	
+	pcb* temp = findPCB(name);
+	
+	if(temp == NULL){
+		sys_req(WRITE,DEFAULT_DEVICE,WRONGNAME,&nameCountPtr);
+	}
+	else{
+		removeFromQueue(temp);
+		freePCB(temp);
+	}
+	}
 
 

@@ -20,6 +20,7 @@
 #include <core/interrupts.h>
 #include <mem/heap.h>
 #include <mem/paging.h>
+#include "../../modules/R5/heapManager.h"
 
 #include "modules/mpx_supt.h"
 #include "modules/R1/Comhandle.h"
@@ -28,6 +29,7 @@
 
 void kmain(void)
 {
+
    extern uint32_t magic;
    // Uncomment if you want to access the multiboot header
    // extern void *mbd;
@@ -47,7 +49,7 @@ void kmain(void)
    // 1) Initialize the support software by identifying the current
    //     MPX Module.  This will change with each module.
    // you will need to call mpx_init from the mpx_supt.c
- 	mpx_init(MODULE_R3);
+ 	mpx_init(MEM_MODULE);
    // 2) Check that the boot was successful and correct when using grub
    // Comment this when booting the kernel directly using QEMU, etc.
    if ( magic != 0x2BADB002 ){
@@ -78,6 +80,12 @@ void kmain(void)
    // NOTE:  You will only have about 70000 bytes of dynamic memory
    //
    init_paging();
+   
+   intializeHeap(50000);
+   isEmpty();
+   sys_set_malloc(allocateMemory);
+   sys_set_free(freeMemory);
+   
    klogv("Initializing virtual memory...");
 
 
@@ -127,11 +135,17 @@ void kmain(void)
 	cp -> eip = ( u32int ) checkAlarm;
 	cp -> eflags = 0x202 ;
 	
-	
-
+	int shutdown=getGlobal();
+	if(shutdown == 1){
+	break;
+	}
 	asm volatile ("int $60");
+	cmcb* locator = getAlloc();
 	
-	
+	while(locator != NULL){
+	freeMemory((u32int*)locator->address);
+	locator=locator->nextCMCB;
+	}
 	}
 
    // 7) System Shutdown on return from your command handler
