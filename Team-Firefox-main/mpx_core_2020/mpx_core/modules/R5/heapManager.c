@@ -11,7 +11,7 @@ char sentence[20];
 cmcb* getAlloc(){
 return beginAlloc;
 }
-//initialized the head 
+
 void intializeHeap(int size){
 	beginMem = kmalloc(size+sizeof(struct cmcb));
 	beginFree = (cmcb*) beginMem;
@@ -25,7 +25,7 @@ void intializeHeap(int size){
 	
 	
 }
-//allocates memory of a specific size
+
 u32int allocateMemory(u32int size){
 	int count = 100;
 	cmcb* locator = beginFree;
@@ -69,7 +69,7 @@ u32int allocateMemory(u32int size){
 	return locator->address;
 }
 
-//locates a specific cmcb with the given address 
+
 cmcb* findCMCB(u32int addr){
 	cmcb* locator = beginFree;
 	while(locator!=NULL){
@@ -99,13 +99,13 @@ int freeMemory(void* addr){
 	return 0;
 	
 }
-//returns 1 if empty 0 if theres an item at the head
+
 int isEmpty(){
 	if(beginAlloc==NULL)return 1;
 	else return 0;
 }
 
-//shows the free memory list
+//print u32int?
 void showFreeMemory(){
 	int count = 100;
 	cmcb* block = beginFree;
@@ -121,7 +121,7 @@ void showFreeMemory(){
 	}
 	
 }
-//shows the allocated memory list
+//print u32int?
 void showAllocatedMemory(){
 	int count = 100;
 	cmcb* block = beginAlloc;
@@ -137,7 +137,6 @@ void showAllocatedMemory(){
 	}
 	
 }
-//This adds the cmcb into the free list and removes it if its also located in the allocated list
 cmcb* placeInFreeList(cmcb* toAdd){
 	cmcb* locator = beginFree;
 	if(locator == NULL){
@@ -191,7 +190,6 @@ cmcb* placeInFreeList(cmcb* toAdd){
 	}
 
 }
-//if 2 adjacent cmcbs are in the free memory it will automatically merge them together
 cmcb* merge(cmcb* free){
 	
 	if(free->nextCMCB != NULL){
@@ -220,7 +218,6 @@ cmcb* merge(cmcb* free){
 return free;
 
 }
-//places the cmcb into the allocated list.
 cmcb* placeInAllocList(cmcb* toAdd){
 	cmcb* locator = beginAlloc;
 	if(locator == NULL){
