@@ -34,14 +34,16 @@ return shutdown;}
 int comHand(){
 char userInput[100];
 
+
+//get input from polling and stores it into userInput
+
+while(!quit){
 //prints menu
 sys_req(WRITE,DEFAULT_DEVICE,"\nFirefox MPX\n0: help \n1: Set Date \n2: Set Time \n3: Display Date \n4: Display Time\n5: Version\n6: Shut Down \n7: Suspend \n8: Resume \n9: Set Priority \n10: Show PCB \n11: Show All \n12: Show Ready\n13: Show Block \n14: Create PCB \n15: Delete PCB \n16: Block \n17: Unblock \n18: Set Alarm \n19: LoadR3 \n20: Resume All\n21: Remove Alarm\n22: Show Free\n23:Show Allocated \nPlease enter your choice, one option at a time, entering only the number corresponding with the option:\n",&menuCountPtr);
 memset(userInput, '\0', 100);
-countPtr=100;
-//get input from polling and stores it into userInput
 sys_req(READ,DEFAULT_DEVICE,userInput,&countPtr);
 bufferTrack=countPtr;
-while(!quit){
+countPtr=100;
 //if 0 is stored into the userInput at location 0
 if(userInput[0] == '0'){
 sys_req(WRITE,DEFAULT_DEVICE, "Option 1: Set Date. \n\t Allows the user to set the Date should the listed date be incorrect.\nOption 2: Set Time. \n\t Allows the user to set the Time should the listed date be incorrect.\nOption 3: Display Date. \n\t Prints the date that is set to the screen.\nOption 4: Display Time. \n\t Prints the time that is set to the screen.\nOption 5: Version. \n\t Prints the currect Version of the project to the screen.\nOption 6: Shut Down. \n\t Begins the shutdown protocol for the system.\nOption 7: Suspend \n\t Sets a user given process to Suspended \nOption 8: Resume \n\t Sets a user given process to Not Suspended \nOption 9: Set Priority\n\t Changes priority of a user given process \nOption 10: Show PCB \n\t Shows the PCB of a user given process \nOption 11: Show All \n\t Shows all PCBs \nOption 12: Show Ready \n\t Shows all PCBs within the ready queue \nOption 13: Show Blocked \n\t Shows all PCBs within the blocked queue \nOption 14: Create PCB \n\t Creates a PCB when the user gives the PCB name, the class, and the priority \nOption 15: Delete PCB \n\t Deletes a user given PCB \nOption 16: Block \n\t Changes a user given process state to blocked and moves PCB to blocked queue \nOption 17: Unblock \n\t Changes a user given process state to ready and moves PCB to ready queue\nOption 18: Set Alarm \n\t Allows the use create an alarm that will display a message when the time entered is reached.\nOption 19: LoadR3\n\t Loads in processes given in R3\nOption 20: Resume All\n\t Sets all processes to Not Suspended\nOption 21: Remove Alarm\n\t Cancels an alarm that has the same name that the user inputs",&countPtr);
@@ -148,33 +150,33 @@ resumeAll();
 	}
 	else if(userInput[1]=='1'){
 	removealarm();
-}/*
-	else if(userInput[1]=='2'){ // initialize heap
+}
+	else if(userInput[1]=='4'){ // initialize heap
 	sys_req(WRITE,DEFAULT_DEVICE,"Enter heap size\n",&menuCountPtr);
 	clearInput(userInput);
 	sys_req(READ,DEFAULT_DEVICE,userInput,&countPtr);
 	int size = atoi(userInput);
 	intializeHeap(size);
 }	
-	else if(userInput[1]=='3'){ // allocate mem
+	else if(userInput[1]=='5'){ // allocate mem
 	sys_req(WRITE,DEFAULT_DEVICE,"Enter size to be allocated\n",&menuCountPtr);
 	clearInput(userInput);
 	sys_req(READ,DEFAULT_DEVICE,userInput,&countPtr);
 	int size = atoi(userInput);
 	allocateMemory(size);
 }
-	else if(userInput[1]=='4'){ // free mem
+	else if(userInput[1]=='6'){ // free mem
 	sys_req(WRITE,DEFAULT_DEVICE,"Enter process address\n",&menuCountPtr);
 	clearInput(userInput);
 	sys_req(READ,DEFAULT_DEVICE,userInput,&countPtr);
 	int add = atoi(userInput);
 	freeMemory((u32int*) add);
 }
-	else if(userInput[1]=='5'){ //is empty
+	else if(userInput[1]=='7'){ //is empty
 	if (isEmpty()) sys_req(WRITE,DEFAULT_DEVICE,"Heap is empty\n",&menuCountPtr);
 	else sys_req(WRITE,DEFAULT_DEVICE,"Heap is not empty\n",&menuCountPtr);
 }
-*/
+
 	else if(userInput[1]=='2'){ // show free mem
 	showFreeMemory();
 }
@@ -282,7 +284,7 @@ else if(userInput[0]=='9'){
 else{
 //comHand();
 }
-yield();
+sys_req(IDLE,COM1,NULL,NULL);
 }
 
 return 0;

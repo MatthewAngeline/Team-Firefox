@@ -211,10 +211,7 @@ u32int * sys_call(context* registers){
 	
 	// set state to ready and put back in ready queueu
 	strcpy(COP->state, "ready");
-	strcpy(toQueue->name,COP->name);
-	toQueue->pcbClass = COP->pcbClass;
-	toQueue->priority = COP->priority;
-	strcpy(toQueue->state,COP->state);	
+	toQueue=COP;	
 
 
 	}
@@ -227,7 +224,7 @@ u32int * sys_call(context* registers){
 	strcpy(COP->state, "running");
 	//that pcb set state to running...
 	//assign COP to that PCB
-	addToReadyQueue(toQueue);
+	if(toQueue!=NULL) addToReadyQueue(toQueue);
 	return (u32int *) COP->stackHead;
 	}
 	else{

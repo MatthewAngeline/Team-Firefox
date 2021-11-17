@@ -92,7 +92,7 @@ void kmain(void)
    // 6) Call YOUR command handler -  interface method
 
    //comHand();
-   	while(1){
+   	
    	//klogv("addingprocesses");
    	pcb* new_pcb = createPCB( "ComHandle", 1 , 9,"Not Suspended"); 
 	context* cp = ( context*)( new_pcb -> stackHead ); 
@@ -135,10 +135,7 @@ void kmain(void)
 	cp -> eip = ( u32int ) checkAlarm;
 	cp -> eflags = 0x202 ;
 	
-	int shutdown=getGlobal();
-	if(shutdown == 1){
-	break;
-	}
+	
 	asm volatile ("int $60");
 	cmcb* locator = getAlloc();
 	
@@ -146,7 +143,8 @@ void kmain(void)
 	freeMemory((u32int*)locator->address);
 	locator=locator->nextCMCB;
 	}
-	}
+	
+	
 
    // 7) System Shutdown on return from your command handler
    klogv("Starting system shutdown procedure...");

@@ -73,27 +73,27 @@ void setAlarm(){
 	sys_req(WRITE,DEFAULT_DEVICE,"Name:",&count);
 	sys_req(READ,DEFAULT_DEVICE,userInput,&count);
 	strcpy(new->name, userInput);
-	clearInput();
+	clearInput(userInput);
 	
 	sys_req(WRITE,DEFAULT_DEVICE,"Message:",&count);
 	sys_req(READ,DEFAULT_DEVICE,userInput,&count);
 	strcpy(new->message, userInput);
-	clearInput();
+	clearInput(userInput);
 	
 	sys_req(WRITE,DEFAULT_DEVICE,"Time (Hour):",&count);
 	sys_req(READ,DEFAULT_DEVICE,userInput,&count);
 	new->hour = atoi(userInput);
-	clearInput();
+	clearInput(userInput);
 	
 	sys_req(WRITE,DEFAULT_DEVICE,"Time (Min):",&count);
 	sys_req(READ,DEFAULT_DEVICE,userInput,&count);
 	new->mins = atoi(userInput);
-	clearInput();
+	clearInput(userInput);
 	
 	sys_req(WRITE,DEFAULT_DEVICE,"Time (Sec):",&count);
 	sys_req(READ,DEFAULT_DEVICE,userInput,&count);
 	new->secs = atoi(userInput);
-	clearInput();
+	clearInput(userInput);
 	
 	valid = checkInput(new->name, new->hour, new->mins, new->secs);
 	}
@@ -121,7 +121,7 @@ void setAlarm(){
 
 void removealarm(){
 sys_req(WRITE, DEFAULT_DEVICE, "Enter the name of the alarm you wish to remove:\n",&count);
-clearInput();
+clearInput(userInput);
 sys_req(READ, DEFAULT_DEVICE, userInput, &count);
 alarm* ref = alarmList[0];
 int i = 0;
