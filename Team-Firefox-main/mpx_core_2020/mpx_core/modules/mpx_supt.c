@@ -11,6 +11,8 @@
 #include <core/serial.h>
 #include "R2/processQueues.h"
 #include "R3/userCommandsR3.h"
+#include "R1/Comhandle.h"
+#include "R6/interruptPolling.h"
 
 
 // global variable containing parameter used when making 
@@ -69,13 +71,15 @@ int sys_req( 	int  op_code,
 
   else if (op_code == READ || op_code == WRITE) {
     // validate buffer pointer and count pointer
-    if (buffer_ptr == NULL){
+     if (buffer_ptr == NULL){
       return_code = INVALID_BUFFER;
       serial_println("Null Buffer");
       }
     else if (count_ptr == NULL || *count_ptr <= 0){
       return_code = INVALID_COUNT;
       serial_println("Count is NULL");
+      
+
 }
 else if(*count_ptr<=0){
 serial_println("count is less than or equal to zero");
@@ -217,6 +221,20 @@ u32int * sys_call(context* registers){
 	}
 	else if(params.op_code == EXIT){
 	freePCB(COP);
+	}
+	else if(params.op_code == READ){
+		dcb* com1 = getCom();
+		com1->currentOp = 0;
+		iocb io = {COP,1,getUserInput(),0,NULL};
+		addToScheduler(com1, &io);
+		//com_read
+	}
+	else if(params.op_code == WRITE){
+		//com_write
+		dcb* com1= getCom();
+		com1->currentOp = 1;
+		iocb io = {COP,0,getUserInput(),0,NULL};
+		addToScheduler(com1, &io);
 	}
 	//klogv("syscall end");
 	if(readyQueue->head != NULL){

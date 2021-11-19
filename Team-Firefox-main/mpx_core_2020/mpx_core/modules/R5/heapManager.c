@@ -32,15 +32,15 @@ u32int allocateMemory(u32int size){
 	int sential = 1;
 	do{
 	if(locator->size >= (u32int)size){
-	if(locator->nextCMCB == NULL){
-		cmcb* newFree = (cmcb*) (locator->address + (u32int)size);
-		newFree->address = locator->address + (u32int)size + (u32int)sizeof(struct cmcb);
-		newFree->size = locator->size - (u32int) size - sizeof(struct cmcb);
-		locator->size = (u32int) size;
-		newFree->type=0;
-		locator->type=1;
-		placeInAllocList(locator);
-		placeInFreeList(newFree);
+		if(locator->nextCMCB == NULL){
+			cmcb* newFree = (cmcb*) (locator->address + (u32int)size);
+			newFree->address = locator->address + (u32int)size + (u32int)sizeof(struct cmcb);
+			newFree->size = locator->size - (u32int) size - sizeof(struct cmcb);
+			locator->size = (u32int) size;
+			newFree->type=0;
+			locator->type=1;
+			placeInAllocList(locator);
+			placeInFreeList(newFree);
 		}
 		else{
 			locator->type = 0;
@@ -229,7 +229,7 @@ cmcb* placeInAllocList(cmcb* toAdd){
 		toAdd->nextCMCB = NULL;
 		beginAlloc = toAdd;
 		
-		beginFree = NULL;
+		//beginFree = NULL;
 		return beginAlloc;
 	}
 	else{
@@ -238,13 +238,13 @@ cmcb* placeInAllocList(cmcb* toAdd){
 		//add to head's lists
 		//cmcb* locator = head;
 		if(beginFree -> address == toAdd -> address){
-		if(beginFree -> nextCMCB != NULL){
-			beginFree = beginFree->nextCMCB;
+			if(beginFree -> nextCMCB != NULL){
+				beginFree = beginFree->nextCMCB;
+			}
+			else{
+			beginFree = NULL;
+			}
 		}
-		else{
-		beginFree = NULL;
-		}
-	}
 		while(locator != NULL){
 			if(toAdd->address < locator->address){
 				toAdd->nextCMCB = locator;
@@ -253,7 +253,7 @@ cmcb* placeInAllocList(cmcb* toAdd){
 				locator->prevCMCB = toAdd;
 				break;
 			}
-			if(locator->nextCMCB==NULL){
+			else if(locator->nextCMCB==NULL){
 				locator->nextCMCB=toAdd;
 				toAdd->prevCMCB = locator;
 				toAdd->nextCMCB = NULL;

@@ -571,5 +571,9 @@ void itoa(int num, char* str){
     }	
 }
 
+char* getUserInput(){
+	return &userInput;
+}
+
 
 
