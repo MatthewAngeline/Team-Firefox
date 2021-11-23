@@ -8,15 +8,13 @@ typedef struct dcb{
 	int currentOp;
 	//vals 0=read   1=write
 	int eventFlag;
-	char userBuffer[100];
-	char internBuffer[100];
+	char* userBuffer;
+	char* internBuffer;
 	//from documentation not ppt?
 	int bufferCount;
 	int transferred;
 	int total;
 	int* count;
-	
-	
 }dcb;
 
 typedef struct iocb{
@@ -24,7 +22,7 @@ typedef struct iocb{
 	//device
 	int operation;
 	//vals 0=read 1=write
-	char buffer[100];
+	char *buffer;
 	int count;
 	struct iocb* nextPtr;
 }iocb;

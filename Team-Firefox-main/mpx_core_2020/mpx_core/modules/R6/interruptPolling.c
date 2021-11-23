@@ -1,11 +1,22 @@
 #include "interruptPolling.h"
 #include "../include/system.h"
-int count = 0;
+int count2 = 0;
 iocbQueue ioQ = {NULL,NULL};
-dcb com1 = {0,0,0,NULL,NULL,0,0,0,&count};
+dcb com1;
+char uBuf[100];
+char iBuf[100];
 
 dcb* getCom(){
-	return com1;
+	com1.allocStatus = 0;
+	com1.currentOp =0;
+	com1.eventFlag=0;
+	com1.userBuffer=uBuf;
+	com1.internBuffer=iBuf;
+	com1.bufferCount=0;
+	com1.transferred=0;
+	com1.total=0;
+	com1.count=&count2;
+	return &com1;
 }
 iocbQueue* getIOCBQueue(){
 	return &ioQ;
@@ -31,7 +42,7 @@ int isBusy(dcb* device){
 	else return 1;
 }
 void passToDevice(dcb* device, iocb* toAdd){
-	device->status = 1;
+	device->allocStatus = 1;
 	
 	device = device;
 	toAdd = toAdd;

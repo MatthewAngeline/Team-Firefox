@@ -27,12 +27,12 @@ char date[10];
 
 int getGlobal(){
 return shutdown;}
-
+char userInput[100];
 
 
 //main file to run all the applications and used to create the menu driven logic.
 int comHand(){
-char userInput[100];
+
 
 
 //get input from polling and stores it into userInput
@@ -572,7 +572,7 @@ void itoa(int num, char* str){
 }
 
 char* getUserInput(){
-	return &userInput;
+	return userInput;
 }
 
 

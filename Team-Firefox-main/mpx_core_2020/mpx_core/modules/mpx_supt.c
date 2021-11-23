@@ -225,16 +225,26 @@ u32int * sys_call(context* registers){
 	else if(params.op_code == READ){
 		dcb* com1 = getCom();
 		com1->currentOp = 0;
-		iocb io = {COP,1,getUserInput(),0,NULL};
-		addToScheduler(com1, &io);
+		iocb io;
+		io.process = COP;
+		io.operation = 1;
+		io.buffer = getUserInput();
+		io.count = 0;
+		io.nextPtr =NULL;
+		addToSchedule(com1, &io);
 		//com_read
 	}
 	else if(params.op_code == WRITE){
 		//com_write
 		dcb* com1= getCom();
 		com1->currentOp = 1;
-		iocb io = {COP,0,getUserInput(),0,NULL};
-		addToScheduler(com1, &io);
+		iocb io;
+		io.process = COP;
+		io.operation = 0;
+		io.buffer = getUserInput();
+		io.count = 0;
+		io.nextPtr =NULL;
+		addToSchedule(com1, &io);
 	}
 	//klogv("syscall end");
 	if(readyQueue->head != NULL){
