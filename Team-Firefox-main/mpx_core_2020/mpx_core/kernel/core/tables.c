@@ -67,6 +67,9 @@ void gdt_init_entry(int idx, u32int base, u32int limit,
   new_entry->access = access;
 }
 
+u32int idt_get_gate(u8int idx){
+return (u32int) &idt_entries[idx];
+}
 /*
   Procedure..: init_gdt
   Description..: Creates the global descriptor table and installs

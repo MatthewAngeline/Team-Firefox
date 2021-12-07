@@ -21,6 +21,7 @@ R4/infiniteCommands.o\
 R3/processes.o\
 R5/heapManager.o\
 R6/interruptPolling.o\
+R6/serial.o\
 
 
 

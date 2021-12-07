@@ -25,6 +25,7 @@
 #include "modules/mpx_supt.h"
 #include "modules/R1/Comhandle.h"
 #include "modules/R4/infiniteCommands.h"
+#include "modules/R6/serial.h"
 
 
 void kmain(void)
@@ -72,6 +73,7 @@ void kmain(void)
     sti();
     klogv("Interrupt vector table initialized!");
     
+   
    // 5) Virtual Memory -- paging.c  -- init_paging
    //  this function creates the kernel's heap
    //  from which memory will be allocated when the program calls
@@ -81,6 +83,12 @@ void kmain(void)
    //
    init_paging();
    
+    com_open(1200);
+    int a = 1;
+    while (a){
+    (void) a;
+    }
+    
    intializeHeap(50000);
    isEmpty();
    sys_set_malloc(allocateMemory);
