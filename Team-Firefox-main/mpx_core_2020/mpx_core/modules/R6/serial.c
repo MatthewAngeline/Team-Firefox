@@ -23,8 +23,25 @@ outb(dev+1, inb(dev+1) & -(1<<bit));
 }
 void input_h(){
 
+//char i = inb(dev);
+//outb(dev,i);
+
+}
+int output_h(){
+if(serial_dcb.dcb_status != 1){
+return -2;
+}
+else if(serial_dcb.out_x != serial_dcb.out_s){
 char i = inb(dev);
 outb(dev,i);
+return -1;
+}
+else{
+serial_dcb.dcb_status = 0;
+serial_dcb.events = 1;
+return serial_dcb.out_x;
+}
+
 
 }
 void top_handler(){
@@ -39,8 +56,14 @@ void top_handler(){
 		inb(dev+6);
 		}
 		else if(bit1 && !bit2){
+		klogv("got to output interrupt");
 		//output handler
-		 
+		while(bit1 ==0){
+		output_h();
+		if(serial_dcb.out_s == serial_dcb.out_x){
+		bit1=0;
+		}
+		}
 		}
 		else if(!bit1&&bit2){
 		//input handler
@@ -59,7 +82,10 @@ int com_open(int baud_rate){
 	//error checking 
 	//is baud rate valid
 	//port is not already open
-	
+	if(serial_dcb.open == 1){
+	return -103;
+	}
+
 	cli();
 	serial_dcb.open = 1;
 	serial_dcb.events = 1;
@@ -97,11 +123,57 @@ int com_open(int baud_rate){
 	
 	return 0;
 }
-int com_write(){
+int com_write(char * buf_p,int * count){
+		if(buf_p == NULL){
+		return -402;
+		}
+		if(count == NULL){
+		return -403;
+		}
+		if(serial_dcb.open !=1){
+		return -401;
+		}
+		if(serial_dcb.dcb_status != 0){
+		return -404;
+		}
+		
+		serial_dcb.out = (unsigned char*)buf_p;
+		serial_dcb.out_x = 0;
+		serial_dcb.out_s = *count;
+		
+				
+		//status @ 1 equals write
+		serial_dcb.dcb_status = 1;
+		serial_dcb.events = 0;
+		
+		outb(dev,serial_dcb.in);
+		
+		
 return 0;
 }
 
-int com_read(){
-return 0;
-}
+int com_read(char * buf_p,int * count){
+	//checks to make sure the buffer is valid, the count is valid, the device is open and the device is idle
+	if(buf_p == NULL){
+	return -302;
+	}
+	if(count == NULL){
+	return -303;
+	}
+	if(serial_dcb.open !=1){
+	return -301;
+	}
+	if(serial_dcb.dcb_status != 0){
+	return -304;
+	}
+	
+	serial_dcb.in =(unsigned char*) buf_p;
+	serial_dcb.in_x = 0;
+	serial_dcb.in_s = *count;
+	//status @ 2 equals read
+	serial_dcb.dcb_status = 2;
+	serial_dcb.events = 0;
+	
+	return 0;
+	}
 
