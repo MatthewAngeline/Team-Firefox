@@ -8,6 +8,7 @@
 #include "../R3/userCommandsR3.h"
 #include "../R4/infiniteCommands.h"
 #include "../R5/heapManager.h"
+#include "../R6/serial.h"
 
 
 
@@ -17,6 +18,7 @@ int quit=0;
 int bufferTrack=0;
 int shutdown = 0;
 
+int * count;
 
 
 
@@ -28,7 +30,7 @@ char date[10];
 int getGlobal(){
 return shutdown;}
 char userInput[100];
-
+char * userInputPtr;
 
 //main file to run all the applications and used to create the menu driven logic.
 int comHand(){

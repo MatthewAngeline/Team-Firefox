@@ -14,36 +14,39 @@ struct dcb serial_dcb = {
 u32int original_idt_entry; 
 
 void set_int(int bit,int on){
-if(on){
-outb(dev+1,inb(dev+1) | (1<<bit));
-}
-else{
-outb(dev+1, inb(dev+1) & -(1<<bit));
-}
-}
+	if(on){
+	outb(dev+1,inb(dev+1) | (1<<bit));
+	}
+	else{
+	outb(dev+1, inb(dev+1) & -(1<<bit));
+	}
+	}
+	
 void input_h(){
 
-//char i = inb(dev);
-//outb(dev,i);
+	//char i = inb(dev);
+	//outb(dev,i);
 
-}
+	}
+	
 int output_h(){
-if(serial_dcb.dcb_status != 1){
-return -2;
-}
-else if(serial_dcb.out_x != serial_dcb.out_s){
-char i = inb(dev);
-outb(dev,i);
-return -1;
-}
-else{
-serial_dcb.dcb_status = 0;
-serial_dcb.events = 1;
-return serial_dcb.out_x;
-}
+	if(serial_dcb.dcb_status != 1){
+	return -2;
+	}
+	else if(serial_dcb.out_x != serial_dcb.out_s){
+	char i = inb(dev);
+	outb(dev,i);
+	return -1;
+	}
+	else{
+	serial_dcb.dcb_status = 0;
+	serial_dcb.events = 1;
+	return serial_dcb.out_x;
+	}
 
 
-}
+	}
+	
 void top_handler(){
 
 	if(serial_dcb.open){
@@ -58,7 +61,7 @@ void top_handler(){
 		else if(bit1 && !bit2){
 		klogv("got to output interrupt");
 		//output handler
-		while(bit1 ==0){
+		while(bit1 == 1){
 		output_h();
 		if(serial_dcb.out_s == serial_dcb.out_x){
 		bit1=0;
@@ -136,7 +139,7 @@ int com_write(char * buf_p,int * count){
 		if(serial_dcb.dcb_status != 0){
 		return -404;
 		}
-		
+	 klogv("Got to Com Write");
 		serial_dcb.out = (unsigned char*)buf_p;
 		serial_dcb.out_x = 0;
 		serial_dcb.out_s = *count;
@@ -146,9 +149,11 @@ int com_write(char * buf_p,int * count){
 		serial_dcb.dcb_status = 1;
 		serial_dcb.events = 0;
 		
-		outb(dev,serial_dcb.in);
+		outb(dev,serial_dcb.out[serial_dcb.out_x]);
 		
 		
+		outb(COM1+1, inb(COM1+1) | 0x02);
+		serial_dcb.out_x = serial_dcb.out_x + 1;
 return 0;
 }
 

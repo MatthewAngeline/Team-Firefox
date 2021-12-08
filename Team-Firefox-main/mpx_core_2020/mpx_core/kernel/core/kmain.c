@@ -50,7 +50,7 @@ void kmain(void)
    // 1) Initialize the support software by identifying the current
    //     MPX Module.  This will change with each module.
    // you will need to call mpx_init from the mpx_supt.c
- 	mpx_init(MEM_MODULE);
+ 	mpx_init(IO_MODULE);
    // 2) Check that the boot was successful and correct when using grub
    // Comment this when booting the kernel directly using QEMU, etc.
    if ( magic != 0x2BADB002 ){
@@ -84,10 +84,6 @@ void kmain(void)
    init_paging();
    
     com_open(1200);
-    int a = 1;
-    while (a){
-    (void) a;
-    }
     
    intializeHeap(50000);
    isEmpty();
@@ -95,7 +91,7 @@ void kmain(void)
    sys_set_free(freeMemory);
    
    klogv("Initializing virtual memory...");
-
+	
 
    // 6) Call YOUR command handler -  interface method
 
