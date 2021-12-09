@@ -20,7 +20,7 @@ R3/userCommandsR3.o\
 R4/infiniteCommands.o\
 R3/processes.o\
 R5/heapManager.o\
-
+R6/serial.o\
 
 
 .c.s:

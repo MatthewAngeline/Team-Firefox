@@ -25,8 +25,9 @@
 #include "modules/mpx_supt.h"
 #include "modules/R1/Comhandle.h"
 #include "modules/R4/infiniteCommands.h"
+#include "modules/R6/serial.h"
 
-char welcome[]={"\n\t░██████╗░░░███╗░░\n\t██╔════╝░░████║░░\n\t██║░░██╗░██╔██║░░\n\t██║░░╚██╗╚═╝██║░░\n\t╚██████╔╝███████╗\n\t░╚═════╝░╚══════╝\n\n"};
+char welcome[]={"\nR6\n"};
 int menuCountPt=150;
 void kmain(void)
 {
@@ -50,7 +51,7 @@ void kmain(void)
    // 1) Initialize the support software by identifying the current
    //     MPX Module.  This will change with each module.
    // you will need to call mpx_init from the mpx_supt.c
- 	mpx_init(MEM_MODULE);
+ 	mpx_init(IO_MODULE);
    // 2) Check that the boot was successful and correct when using grub
    // Comment this when booting the kernel directly using QEMU, etc.
    if ( magic != 0x2BADB002 ){
@@ -72,7 +73,8 @@ void kmain(void)
     init_pic();
     sti();
     klogv("Interrupt vector table initialized!");
-    
+    com_open(1200);
+    com_write(welcome,&menuCountPt);
    // 5) Virtual Memory -- paging.c  -- init_paging
    //  this function creates the kernel's heap
    //  from which memory will be allocated when the program calls

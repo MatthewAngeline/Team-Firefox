@@ -1,4 +1,4 @@
-/*************************************************************
+/**************************************************************
 *	This C file contains the MPX support functions 
 *	which will be used through out the semester, many set
 *	flags or methods that will allow us to modify
@@ -11,6 +11,9 @@
 #include <core/serial.h>
 #include "R2/processQueues.h"
 #include "R3/userCommandsR3.h"
+#include "R1/Comhandle.h"
+#include "R6/serial.h"
+
 
 
 // global variable containing parameter used when making 
@@ -69,13 +72,15 @@ int sys_req( 	int  op_code,
 
   else if (op_code == READ || op_code == WRITE) {
     // validate buffer pointer and count pointer
-    if (buffer_ptr == NULL){
+     if (buffer_ptr == NULL){
       return_code = INVALID_BUFFER;
       serial_println("Null Buffer");
       }
     else if (count_ptr == NULL || *count_ptr <= 0){
       return_code = INVALID_COUNT;
       serial_println("Count is NULL");
+      
+
 }
 else if(*count_ptr<=0){
 serial_println("count is less than or equal to zero");
@@ -217,6 +222,14 @@ u32int * sys_call(context* registers){
 	}
 	else if(params.op_code == EXIT){
 	freePCB(COP);
+	}
+	else if(params.op_code == READ){
+		
+		//com_read
+	}
+	else if(params.op_code == WRITE){
+		//com_write(getUserInput,menuCountPtr);
+	
 	}
 	//klogv("syscall end");
 	if(readyQueue->head != NULL){
