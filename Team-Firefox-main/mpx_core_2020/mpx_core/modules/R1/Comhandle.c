@@ -24,7 +24,10 @@ int shutdown = 0;
 char time[10];
 char date[10];
 char userInput[100];
+char * getUserInput(){
 
+return userInput;
+}
 char MENU[]={"\nFirefox MPX\n0: help \n1: Set Date \n2: Set Time \n3: Display Date \n4: Display Time\n5: Version\n6: Shut Down \n7: Suspend \n8: Resume \n9: Set Priority \n10: Show PCB \n11: Show All \n12: Show Ready\n13: Show Block \n14: Create PCB \n15: Delete PCB \n16: Block \n17: Unblock \n18: Set Alarm  \n19: LoadR3 \n20: Resume All\n21: Remove Alarm\n22: Show Free \n23: Show Allocated\nPlease enter your choice, one option at a time, entering only the number corresponding with the option:\n"};
 char WRONGFORMAT[]={"Please insert the correct format\n"};
 int getGlobal(){
@@ -507,7 +510,7 @@ void getTime(){
 void Version(){
 menuCountPtr=100;
 	//writes a prerecorded version update to terminal
-sys_req(WRITE,DEFAULT_DEVICE,"5.0 \nCompletion Date:11/11/21\n",&menuCountPtr);
+sys_req(WRITE,DEFAULT_DEVICE,"6.0 \nCompletion Date:12/09/21\n",&menuCountPtr);
 comHand();
 }
 //displays hard coded information about each of the modules that have been added that the user can use. 

@@ -10,7 +10,38 @@ int i = 0;
 struct dcb serial_dcb = {
 	.ring_s = sizeof(*serial_dcb.ring/sizeof(unsigned char))
 };
-
+struct iocbQueue ioQ = {
+NULL,NULL
+};
+struct iocbQueue* getIOCBQueue(){
+	return &ioQ;
+}
+void addToSchedule(dcb device, iocb* toAdd){
+	iocbQueue* q = getIOCBQueue();
+	if(isBusy(device)==1){
+		if(q->head == NULL) {
+			q->head = toAdd;
+			q->tail = toAdd;
+		}
+		else{
+			q->tail->nextPtr = toAdd;
+			q->tail = toAdd;
+		}
+	}
+	else{
+		passToDevice(device,toAdd);
+	}
+}
+int isBusy(dcb device){
+	if(device.dcb_status == 1) return 1;
+	else return 0;
+}
+void passToDevice(dcb device, iocb* toAdd){
+	device.dcb_status = 1;
+	
+	device = device;
+	toAdd = toAdd;
+}
 u32int original_idt_entry; 
 
 void set_int(int bit,int on){
@@ -82,10 +113,7 @@ void top_handler(){
 		//output handler
 		
 		output_h();
-		if(serial_dcb.out_s == serial_dcb.out_x){
-		bit1=0;
 		
-		}
 		}
 		else if(!bit1&&bit2){
 		//input handler
@@ -99,7 +127,9 @@ void top_handler(){
 	}
 	outb(0x20,0x20);
 }
-
+struct dcb getDCB(){
+return serial_dcb;
+}
 int com_open(int baud_rate){
 	//error checking 
 	//is baud rate valid
@@ -200,7 +230,7 @@ int com_read(char * buf_p,int * count){
 	
 	cli();
 	
-	if(i == serial_dcb.out_s || serial_dcb.in[serial_dcb.in_x] != '\x0D' || serial_dcb.ring[i] == NULL){
+	if(i == serial_dcb.out_s || serial_dcb.in[serial_dcb.in_x] != '\x0D' || serial_dcb.ring[i] == '\0'){
 	return 0;
 	}
 	else{
@@ -216,4 +246,4 @@ int com_read(char * buf_p,int * count){
 	serial_dcb.events =1;
 	return 0;
 	}
-
+	

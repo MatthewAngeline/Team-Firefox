@@ -2,6 +2,7 @@
 #define _COMHANDLE_H
 
 int getGlobal();
+char * getUserInput();
 
 int comHand();
 

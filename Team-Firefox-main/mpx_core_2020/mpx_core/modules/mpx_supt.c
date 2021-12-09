@@ -14,7 +14,7 @@
 #include "R1/Comhandle.h"
 #include "R6/serial.h"
 
-
+int  count_io = 100;
 
 // global variable containing parameter used when making 
 // system calls via sys_req
@@ -224,12 +224,27 @@ u32int * sys_call(context* registers){
 	freePCB(COP);
 	}
 	else if(params.op_code == READ){
-		
-		//com_read
+		struct dcb com1 = getDCB();
+		iocb io;
+		io.process = COP;
+		io.operation = 1;
+		io.buffer = getUserInput();
+		io.count = 0;
+		io.nextPtr =NULL;
+		addToSchedule(com1, &io);
+		com_read(getUserInput(),(int*)count_io);
 	}
 	else if(params.op_code == WRITE){
-		//com_write(getUserInput,menuCountPtr);
-	
+		
+		struct dcb com1 = getDCB();
+		iocb io;
+		io.process = COP;
+		io.operation = 1;
+		io.buffer = getUserInput();
+		io.count = 0;
+		io.nextPtr =NULL;
+		addToSchedule(com1, &io);
+		com_write("a",(int*)count_io);
 	}
 	//klogv("syscall end");
 	if(readyQueue->head != NULL){

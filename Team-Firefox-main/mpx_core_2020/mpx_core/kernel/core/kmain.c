@@ -27,7 +27,7 @@
 #include "modules/R4/infiniteCommands.h"
 #include "modules/R6/serial.h"
 
-char welcome[]={"R6\n"};
+char welcome[]={"R6"};
 int menuCountPt=10;
 void kmain(void)
 {
@@ -74,7 +74,9 @@ void kmain(void)
     sti();
     klogv("Interrupt vector table initialized!");
     com_open(1200);
-    com_write(welcome,(int *) 2);
+    //sys_req(WRITE,DEFAULT_DEVICE,"Hello",&menuCountPt);
+   com_write("hello\n",(int *)menuCountPt);
+   //com_read(getUserInput(),(int*)menuCountPt);	
    // 5) Virtual Memory -- paging.c  -- init_paging
    //  this function creates the kernel's heap
    //  from which memory will be allocated when the program calls
