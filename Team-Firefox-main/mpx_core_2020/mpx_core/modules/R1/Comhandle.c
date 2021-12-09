@@ -8,7 +8,6 @@
 #include "../R3/userCommandsR3.h"
 #include "../R4/infiniteCommands.h"
 #include "../R5/heapManager.h"
-#include "../R6/serial.h"
 
 
 
@@ -18,30 +17,33 @@ int quit=0;
 int bufferTrack=0;
 int shutdown = 0;
 
-int * count;
 
 
 
 
 char time[10];
 char date[10];
+char userInput[100];
 
-
+char MENU[]={"\nFirefox MPX\n0: help \n1: Set Date \n2: Set Time \n3: Display Date \n4: Display Time\n5: Version\n6: Shut Down \n7: Suspend \n8: Resume \n9: Set Priority \n10: Show PCB \n11: Show All \n12: Show Ready\n13: Show Block \n14: Create PCB \n15: Delete PCB \n16: Block \n17: Unblock \n18: Set Alarm  \n19: LoadR3 \n20: Resume All\n21: Remove Alarm\n22: Show Free \n23: Show Allocated\nPlease enter your choice, one option at a time, entering only the number corresponding with the option:\n"};
+char WRONGFORMAT[]={"Please insert the correct format\n"};
 int getGlobal(){
 return shutdown;}
-char userInput[100];
-char * userInputPtr;
+
+
 
 //main file to run all the applications and used to create the menu driven logic.
 int comHand(){
-
 
 
 //get input from polling and stores it into userInput
 
 while(!quit){
 //prints menu
-sys_req(WRITE,DEFAULT_DEVICE,"\nFirefox MPX\n0: help \n1: Set Date \n2: Set Time \n3: Display Date \n4: Display Time\n5: Version\n6: Shut Down \n7: Suspend \n8: Resume \n9: Set Priority \n10: Show PCB \n11: Show All \n12: Show Ready\n13: Show Block \n14: Create PCB \n15: Delete PCB \n16: Block \n17: Unblock \n18: Set Alarm \n19: LoadR3 \n20: Resume All\n21: Remove Alarm\n22: Show Free\n23:Show Allocated \nPlease enter your choice, one option at a time, entering only the number corresponding with the option:\n",&menuCountPtr);
+
+//sys_req(WRITE,DEFAULT_DEVICE,"\033[31m\n",&menuCountPtr);
+sys_req(WRITE,DEFAULT_DEVICE,MENU,&menuCountPtr);
+//sys_req(WRITE,DEFAULT_DEVICE,"\033[0m\n",&menuCountPtr);
 memset(userInput, '\0', 100);
 sys_req(READ,DEFAULT_DEVICE,userInput,&countPtr);
 bufferTrack=countPtr;
@@ -571,10 +573,6 @@ void itoa(int num, char* str){
     if(str[0] == '\0'){
         strcpy(str,"0");
     }	
-}
-
-char* getUserInput(){
-	return userInput;
 }
 
 

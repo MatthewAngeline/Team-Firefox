@@ -22,7 +22,7 @@ void top_handler();
 int com_open(int baud_rate);
 void set_int();
 void input_h();
-int output_h();
+void output_h();
 int com_write(char * buf_p,int * count);
 int com_read(char * buf_p,int * count);
 //#endif

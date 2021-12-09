@@ -6,7 +6,7 @@
 
 u32int dev = COM1;
 int level = 4;
-
+int i = 0;
 struct dcb serial_dcb = {
 	.ring_s = sizeof(*serial_dcb.ring/sizeof(unsigned char))
 };
@@ -24,26 +24,45 @@ void set_int(int bit,int on){
 	
 void input_h(){
 
-	//char i = inb(dev);
-	//outb(dev,i);
-
+	char i = inb(dev);
+	if(serial_dcb.dcb_status == 2){
+	if(serial_dcb.in_x == 15){
+	return;
+	}
+	serial_dcb.ring[serial_dcb.in_x] = i;
+	return;
 	}
 	
-int output_h(){
-	if(serial_dcb.dcb_status != 1){
-	return -2;
-	}
-	else if(serial_dcb.out_x != serial_dcb.out_s){
-	char i = inb(dev);
+	else{
+	serial_dcb.in[serial_dcb.in_x] = i;
 	outb(dev,i);
-	return -1;
+	serial_dcb.in_x = serial_dcb.in_x+1;
+	if(serial_dcb.in_x != serial_dcb.in_s && serial_dcb.in[serial_dcb.in_x] != '\x0D'){
+	return;
 	}
 	else{
 	serial_dcb.dcb_status = 0;
 	serial_dcb.events = 1;
-	return serial_dcb.out_x;
+	return (void)serial_dcb.in_x;
+}
 	}
-
+	}
+	
+void output_h(){
+	if(serial_dcb.dcb_status != 1){
+	return;
+	}
+	else if(serial_dcb.out_x != serial_dcb.out_s){
+	outb(COM1,serial_dcb.out[serial_dcb.out_x]);
+	serial_dcb.out_x = serial_dcb.out_x + 1;
+	return;
+	}
+	else{
+	serial_dcb.dcb_status = 0;
+	serial_dcb.events = 1;
+	return (void)serial_dcb.out_x;
+	}
+	
 
 	}
 	
@@ -59,13 +78,13 @@ void top_handler(){
 		inb(dev+6);
 		}
 		else if(bit1 && !bit2){
-		klogv("got to output interrupt");
+		//klogv("got to output interrupt");
 		//output handler
-		while(bit1 == 1){
+		
 		output_h();
 		if(serial_dcb.out_s == serial_dcb.out_x){
 		bit1=0;
-		}
+		
 		}
 		}
 		else if(!bit1&&bit2){
@@ -139,7 +158,7 @@ int com_write(char * buf_p,int * count){
 		if(serial_dcb.dcb_status != 0){
 		return -404;
 		}
-	 klogv("Got to Com Write");
+
 		serial_dcb.out = (unsigned char*)buf_p;
 		serial_dcb.out_x = 0;
 		serial_dcb.out_s = *count;
@@ -153,7 +172,7 @@ int com_write(char * buf_p,int * count){
 		
 		
 		outb(COM1+1, inb(COM1+1) | 0x02);
-		serial_dcb.out_x = serial_dcb.out_x + 1;
+		serial_dcb.out_x = 1;
 return 0;
 }
 
@@ -179,6 +198,22 @@ int com_read(char * buf_p,int * count){
 	serial_dcb.dcb_status = 2;
 	serial_dcb.events = 0;
 	
+	cli();
+	
+	if(i == serial_dcb.out_s || serial_dcb.in[serial_dcb.in_x] != '\x0D' || serial_dcb.ring[i] == NULL){
+	return 0;
+	}
+	else{
+	serial_dcb.ring[i] = serial_dcb.in[i];
+	serial_dcb.ring[i] = '\0';
+	i++;
+	return 0;
+	}
+	
+	sti();
+	
+	serial_dcb.dcb_status = 0;
+	serial_dcb.events =1;
 	return 0;
 	}
 

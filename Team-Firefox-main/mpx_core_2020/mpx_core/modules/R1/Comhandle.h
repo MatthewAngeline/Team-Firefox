@@ -24,6 +24,4 @@ int BCDToDec(unsigned char num);
 
 void itoa(int num, char* str);
 
-char* getUserInput();
-
 #endif

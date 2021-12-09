@@ -27,7 +27,8 @@
 #include "modules/R4/infiniteCommands.h"
 #include "modules/R6/serial.h"
 
-
+char welcome[]={"R6\n"};
+int menuCountPt=10;
 void kmain(void)
 {
 
@@ -72,8 +73,8 @@ void kmain(void)
     init_pic();
     sti();
     klogv("Interrupt vector table initialized!");
-    
-   
+    com_open(1200);
+    com_write(welcome,(int *) 2);
    // 5) Virtual Memory -- paging.c  -- init_paging
    //  this function creates the kernel's heap
    //  from which memory will be allocated when the program calls
@@ -83,15 +84,13 @@ void kmain(void)
    //
    init_paging();
    
-    com_open(1200);
-    
    intializeHeap(50000);
    isEmpty();
    sys_set_malloc(allocateMemory);
    sys_set_free(freeMemory);
    
    klogv("Initializing virtual memory...");
-	
+
 
    // 6) Call YOUR command handler -  interface method
 

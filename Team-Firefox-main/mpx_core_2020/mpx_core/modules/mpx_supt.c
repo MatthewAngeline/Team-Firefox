@@ -1,4 +1,4 @@
-/*************************************************************
+/**************************************************************
 *	This C file contains the MPX support functions 
 *	which will be used through out the semester, many set
 *	flags or methods that will allow us to modify
@@ -12,7 +12,8 @@
 #include "R2/processQueues.h"
 #include "R3/userCommandsR3.h"
 #include "R1/Comhandle.h"
-#include "R6/interruptPolling.h"
+#include "R6/serial.h"
+
 
 
 // global variable containing parameter used when making 
@@ -223,28 +224,12 @@ u32int * sys_call(context* registers){
 	freePCB(COP);
 	}
 	else if(params.op_code == READ){
-		dcb* com1 = getCom();
-		com1->currentOp = 0;
-		iocb io;
-		io.process = COP;
-		io.operation = 1;
-		io.buffer = getUserInput();
-		io.count = 0;
-		io.nextPtr =NULL;
-		addToSchedule(com1, &io);
+		
 		//com_read
 	}
 	else if(params.op_code == WRITE){
-		//com_write
-		dcb* com1= getCom();
-		com1->currentOp = 1;
-		iocb io;
-		io.process = COP;
-		io.operation = 0;
-		io.buffer = getUserInput();
-		io.count = 0;
-		io.nextPtr =NULL;
-		addToSchedule(com1, &io);
+		//com_write(getUserInput,menuCountPtr);
+	
 	}
 	//klogv("syscall end");
 	if(readyQueue->head != NULL){
